@@ -3,12 +3,11 @@ package com.example.drumstudyems.view
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.*
-import com.example.drumstudyems.Greeting
 
 
 sealed class NavScreen(val route : String){
     object Start : NavScreen("start")
-    object First : NavScreen("first")
+    object Drum : NavScreen("drum")
 }
 
 @Composable
@@ -21,8 +20,13 @@ fun AppNavigation(
             route = NavScreen.Start.route
         ){
             ScreenStartHandler {
-                {}
+                navController.navigate(NavScreen.Drum.route)
             }
+        }
+        composable(
+            route = NavScreen.Drum.route
+        ){
+            ScreenDrumHero()
         }
     }
 }
