@@ -17,31 +17,41 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.drumstudyems.model.DrumHit
 import com.example.drumstudyems.ui.theme.DrumStudyEMSTheme
 import com.example.drumstudyems.view.elements.drumPoint
 import com.example.drumstudyems.viewmodel.DrumStudyViewModel
-import androidx.compose.runtime.livedata.observeAsState
+import kotlinx.coroutines.Dispatchers
+
+
 
 @Composable
 fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
 
-    val currentTime by drumStudyViewModel.getCurrentTime().observeAsState()
+    val currentTimeFlow by
+    drumStudyViewModel.getCurrentTime()
+        .collectAsState(initial = Pair(0L,0L), Dispatchers.Main)
+
+    val activeHitsFlow by
+    drumStudyViewModel.getActiveHits()
+        .collectAsState(initial = Pair(listOf<DrumHit>(),listOf<DrumHit>()), Dispatchers.Main)
+
+//    val activeHitsFlow = Pair(listOf<DrumHit>(),listOf<DrumHit>())
 
     ScreenDrumHero(
-        currentTime
+        currentTimeFlow,
+        activeHitsFlow
     )
 }
 
 @Composable
 fun ScreenDrumHero(
-    currentTime : Long?
+    currentTime: Pair<Long ,Long>,
+    drumhits: Pair<List<DrumHit>, List<DrumHit>>
 ){
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
-
-    val leftPosX = screenWidth/3
-    val rightPosX = screenWidth/3*2
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -49,8 +59,8 @@ fun ScreenDrumHero(
     )
     {
         Row {
-            RythmBox(Color.DarkGray, screenWidth/2, screenHeight)
-            RythmBox(Color.LightGray, screenWidth/2, screenHeight)
+            RythmBox(Color.Gray, screenWidth/2, screenHeight, drumhits.first)
+            RythmBox(Color.LightGray, screenWidth/2, screenHeight, drumhits.second)
         }
         Divider(
             modifier = Modifier
@@ -59,13 +69,13 @@ fun ScreenDrumHero(
             color = Color.Cyan,
         )
 
-        showTimer(currentTime)
+        showTimer(currentTime, screenHeight/100*95)
     }
 
 }
 
 @Composable
-fun RythmBox(color : Color, width : Dp, height : Dp){
+fun RythmBox(color : Color, width : Dp, height : Dp, drumHits : List<DrumHit>){
     Box (
         modifier = Modifier
             .background(color)
@@ -74,28 +84,29 @@ fun RythmBox(color : Color, width : Dp, height : Dp){
         contentAlignment = Alignment.TopCenter
     )
     {
-        drumPoint(20.dp,20.dp, 0.dp)
-        drumPoint(20.dp,20.dp, 20.dp)
-        drumPoint(20.dp,20.dp, 40.dp)
+        for(each in drumHits){
+            drumPoint(
+                optimalHit = 20.dp,
+                tolerance = 20.dp,
+                offsetY = each.hitTime.toInt().dp)
+        }
     }
 }
 
 @Composable
-fun showTimer(currentTime : Long?){
-    val renderTime = currentTime ?: 0L
-    Text(
-        modifier = Modifier
-            ,
-        text = renderTime.toString()
-    )
+fun showTimer(currentTime: Pair<Long ,Long>, offsetY : Dp){
+        Text(
+            text = currentTime.first.toString() + "  |  " + currentTime.second.toString(),
+            modifier = Modifier.offset(y = offsetY)
+        )
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun ScreenDrumHeroPreview() {
-    DrumStudyEMSTheme {
-        ScreenDrumHero(1L)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ScreenDrumHeroPreview() {
+//    DrumStudyEMSTheme {
+//        ScreenDrumHero(Pair(1L, 0L))
+//    }
+//}
 

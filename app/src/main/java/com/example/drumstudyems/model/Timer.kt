@@ -1,44 +1,47 @@
 package com.example.drumstudyems.model
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.*
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicLong
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 
 
-class Timer {
+data class Time(val currentTime : Long, val deltaTime : Long)
 
-    var timer : Job? = null
+    val mutex = Semaphore(1)
+    var curTimeDelT = Pair(0L,0L)
 
-    var startTime = AtomicLong(0)
-    var isRunning = AtomicBoolean(false)
-    var shouldRun = AtomicBoolean(false)
+class Timer(countDown : Long) {
 
+    private val currentTimeFlow : Flow<Pair<Long, Long>> = flow{
+        var startTime = System.currentTimeMillis()
+        var deltaTime: Long
+        var currentTime = 0L
+        while (true){
+            delay(10L)
+            val last = currentTime
+            val now = System.currentTimeMillis()
+            currentTime = now - startTime
+            deltaTime = currentTime - last
 
-    private val currentTime = MutableLiveData(0L)
+            mutex.acquire()
+            curTimeDelT = Pair(currentTime,deltaTime)
+            mutex.release()
 
-    fun start() {
-        if (timer == null) {
-            shouldRun.set(true)
-            isRunning.set(true)
-            timer = CoroutineScope(Dispatchers.Default).launch{
-                startTime.set(System.currentTimeMillis())
-                while (shouldRun.get()){
-                    currentTime.setValue(System.currentTimeMillis() - startTime.get())
-                }
-                isRunning.set(false)
-            }
+            emit(Pair(currentTime,deltaTime))
         }
-    }
+    }.flowOn(Dispatchers.Default)
 
-    fun stop(){
-        if(isRunning.get()){
-            shouldRun.set(false)
-        }
-    }
+    fun getCurrentTimeFlow() = currentTimeFlow
 
-    fun getCurrentTime() = currentTime
+    suspend fun getCurrentTime() : Pair<Long, Long>{
+        var temp = Pair(0L,0L)
+        mutex.acquire()
+        temp = curTimeDelT
+        mutex.release()
+        return temp
+    }
 }

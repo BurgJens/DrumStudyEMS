@@ -1,7 +1,3 @@
 package com.example.drumstudyems.model
 
-enum class DrumHitSide{
-    LEFT, RIGHT
-}
-class DrumHit (hitTime : Double, side : DrumHitSide) {
-}
+data class DrumHit (var segment : Long, var hitTime : Long)
