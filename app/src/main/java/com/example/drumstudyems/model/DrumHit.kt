@@ -1,3 +1,7 @@
 package com.example.drumstudyems.model
 
-data class DrumHit (var segment : Long, var hitTime : Long)
+enum class LeftRight{
+    LEFT,
+    Right
+}
+data class DrumHit (var segment : Long, var hitTime : Long, var side : LeftRight)

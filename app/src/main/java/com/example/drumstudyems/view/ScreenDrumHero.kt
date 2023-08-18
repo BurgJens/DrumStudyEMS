@@ -1,11 +1,13 @@
 package com.example.drumstudyems.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -14,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.drumstudyems.model.DrumHit
-import com.example.drumstudyems.ui.theme.DrumStudyEMSTheme
+import com.example.drumstudyems.model.RythmManagerData
+import com.example.drumstudyems.model.TimeData
 import com.example.drumstudyems.view.elements.drumPoint
 import com.example.drumstudyems.viewmodel.DrumStudyViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,30 +33,32 @@ import kotlinx.coroutines.Dispatchers
 @Composable
 fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
 
-    val currentTimeFlow by
-    drumStudyViewModel.getCurrentTime()
-        .collectAsState(initial = Pair(0L,0L), Dispatchers.Main)
+    val rythmManagerData by
+    drumStudyViewModel.getRythmManagerData()
+        .collectAsState(initial = RythmManagerData(
+            timeData = TimeData(0L,0L),
+            drumHits = listOf()
+        ), Dispatchers.Main)
 
-    val activeHitsFlow by
-    drumStudyViewModel.getActiveHits()
-        .collectAsState(initial = Pair(listOf<DrumHit>(),listOf<DrumHit>()), Dispatchers.Main)
-
-//    val activeHitsFlow = Pair(listOf<DrumHit>(),listOf<DrumHit>())
+//    val test by
+//    drumStudyViewModel.startTimer().collectAsState(initial = TimeData(0L,0L))
 
     ScreenDrumHero(
-        currentTimeFlow,
-        activeHitsFlow
+        rythmManagerData,
+        2000
     )
 }
 
 @Composable
 fun ScreenDrumHero(
-    currentTime: Pair<Long ,Long>,
-    drumhits: Pair<List<DrumHit>, List<DrumHit>>
+    rythmManagerData: RythmManagerData,
+    timeFrame: Int
 ){
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+
+    val heightInMS = screenHeight / timeFrame
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -59,8 +66,8 @@ fun ScreenDrumHero(
     )
     {
         Row {
-            RythmBox(Color.Gray, screenWidth/2, screenHeight, drumhits.first)
-            RythmBox(Color.LightGray, screenWidth/2, screenHeight, drumhits.second)
+            RythmBox(Color.Gray, screenWidth/2, screenHeight, rythmManagerData)
+            RythmBox(Color.LightGray, screenWidth/2, screenHeight, rythmManagerData)
         }
         Divider(
             modifier = Modifier
@@ -69,13 +76,14 @@ fun ScreenDrumHero(
             color = Color.Cyan,
         )
 
-        showTimer(currentTime, screenHeight/100*95)
+        ShowTimer(rythmManagerData.timeData, screenHeight/100*95)
     }
 
 }
 
 @Composable
-fun RythmBox(color : Color, width : Dp, height : Dp, drumHits : List<DrumHit>){
+fun RythmBox(color : Color, width : Dp, height : Dp, rythmManagerData : RythmManagerData){
+    Log.d("RythmBox", "${rythmManagerData.drumHits}")
     Box (
         modifier = Modifier
             .background(color)
@@ -84,20 +92,21 @@ fun RythmBox(color : Color, width : Dp, height : Dp, drumHits : List<DrumHit>){
         contentAlignment = Alignment.TopCenter
     )
     {
-        for(each in drumHits){
+        for(each in rythmManagerData.drumHits){
             drumPoint(
                 optimalHit = 20.dp,
                 tolerance = 20.dp,
-                offsetY = each.hitTime.toInt().dp)
+                offsetY = height/2)
         }
     }
 }
 
 @Composable
-fun showTimer(currentTime: Pair<Long ,Long>, offsetY : Dp){
+fun ShowTimer(timeData: TimeData, offsetY : Dp){
         Text(
-            text = currentTime.first.toString() + "  |  " + currentTime.second.toString(),
-            modifier = Modifier.offset(y = offsetY)
+            text = "${timeData.currentTime}  |  ${timeData.deltaTime}",
+            modifier = Modifier.offset(y = offsetY),
+            fontSize = 30.sp
         )
 }
 

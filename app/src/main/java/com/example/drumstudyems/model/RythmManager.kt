@@ -1,47 +1,56 @@
 package com.example.drumstudyems.model
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+
+data class RythmManagerData(val timeData: TimeData, val drumHits : List<DrumHit>)
 
 class RythmManager(timer: Timer) {
 
     private var acitveRythm = BaseRythm()
 
-    val activeLeftHit = mutableListOf<DrumHit>()
-    val activeRightHit = mutableListOf<DrumHit>()
+    val activeHits = mutableListOf<DrumHit>()
 
-    val oldLeftHit = mutableListOf<DrumHit>()
-    val oldRightHit = mutableListOf<DrumHit>()
+    val oldHits = mutableListOf<DrumHit>()
 
-    private val activeRythmFlow = flow<Pair<List<DrumHit>,List<DrumHit>>> {
-        while (true){
-            val value = timer.getCurrentTime()
-            val currentTime = value.first
-            val deltaTime = value.second
+    val inputFlow = timer.getTimeDataFlow()
 
-            val rythmSegment = currentTime.mod(acitveRythm.tactDuration)
-            val timeInSegment = currentTime.rem(acitveRythm.tactDuration)
 
-            for (hitTime in acitveRythm.leftDrum){
-                if(
-                    hitTime <= timeInSegment &&
-                    hitTime >= timeInSegment - deltaTime
-                ){
-                    activeLeftHit.add(DrumHit(
+
+
+    private val activeRythmFlow = timer.getTimeDataFlow().map { time ->
+
+        val rythmSegment = time.currentTime.mod(acitveRythm.tactDuration)
+        val timeInSegment = time.currentTime.rem(acitveRythm.tactDuration)
+
+        for (hitTime in acitveRythm.leftDrum) {
+            if (
+                hitTime <= timeInSegment &&
+                hitTime >= timeInSegment - time.deltaTime
+            ) {
+//                Log.d("RythmManager", "hit geaddet")
+                activeHits.add(
+                    DrumHit(
                         segment = rythmSegment,
-                        hitTime = rythmSegment*acitveRythm.tactDuration + hitTime)
+                        hitTime = rythmSegment * acitveRythm.tactDuration + hitTime,
+                        side = LeftRight.LEFT
                     )
-                }
+                )
+                Log.d("RythmManager", "${activeHits}")
             }
-
-            emit(Pair(activeLeftHit,activeRightHit))
-
         }
-    }.flowOn(Dispatchers.Default)
+        RythmManagerData(time, activeHits)
+    }
 
     fun getActiveRythmFlow() = activeRythmFlow
-
 
 }
