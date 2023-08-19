@@ -13,14 +13,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.drumstudyems.model.LeftRight
 import com.example.drumstudyems.ui.theme.DrumStudyEMSTheme
 
 @Composable
-fun drumPoint (optimalHit : Dp, tolerance : Dp, offsetY : Dp){
+fun drumPoint (optimalHit : Dp, tolerance : Dp, offsetY : Dp, offsetX : Dp, side : LeftRight){
+    val side = when(side){
+        LeftRight.Right -> 1
+        LeftRight.LEFT -> -1
+    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.
-            offset(y = offsetY- optimalHit/2 - tolerance)
+            offset(y = offsetY- optimalHit/2 - tolerance, x = offsetX*side)
     ){
         toleranceLine(optimalHit, tolerance)
         drumCircle(optimalHit)
@@ -49,10 +54,10 @@ fun toleranceLine (optimalHit : Dp, tolerance: Dp){
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun drumPointPreview() {
-    DrumStudyEMSTheme {
-        drumPoint(20.dp,20.dp,0.dp)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun drumPointPreview() {
+//    DrumStudyEMSTheme {
+//        drumPoint(20.dp,20.dp,0.dp)
+//    }
+//}

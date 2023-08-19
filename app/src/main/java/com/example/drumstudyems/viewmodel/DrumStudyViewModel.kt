@@ -6,7 +6,7 @@ import com.example.drumstudyems.model.Timer
 
 class DrumStudyViewModel : ViewModel(){
 
-    val timer = Timer(2000L)
+    val timer = Timer(2000L, 16)
 
     val rythmManager = RythmManager(timer)
 

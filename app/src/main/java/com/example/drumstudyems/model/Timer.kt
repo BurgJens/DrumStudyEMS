@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.flowOn
 
 data class TimeData(val currentTime : Long, val deltaTime : Long)
 
-class Timer(countDown : Long) {
+class Timer(countDown : Long, val delay : Long) {
 
     private val currentTimeFlow = flow{
         var startTime = System.currentTimeMillis()
         var deltaTime: Long
         var currentTime = 0L
         while (true){
-            delay(10L)
+            delay(delay)
             val last = currentTime
             val currentTimeGlobal = System.currentTimeMillis()
             currentTime = currentTimeGlobal - startTime

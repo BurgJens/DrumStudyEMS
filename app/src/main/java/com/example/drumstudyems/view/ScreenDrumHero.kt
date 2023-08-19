@@ -65,10 +65,9 @@ fun ScreenDrumHero(
         contentAlignment = Alignment.TopCenter
     )
     {
-        Row {
-            RythmBox(Color.Gray, screenWidth/2, screenHeight, rythmManagerData)
-            RythmBox(Color.LightGray, screenWidth/2, screenHeight, rythmManagerData)
-        }
+
+        RythmBox(Color.LightGray, screenWidth, screenHeight, rythmManagerData)
+
         Divider(
             modifier = Modifier
                 .height(10.dp)
@@ -83,7 +82,7 @@ fun ScreenDrumHero(
 
 @Composable
 fun RythmBox(color : Color, width : Dp, height : Dp, rythmManagerData : RythmManagerData){
-    Log.d("RythmBox", "${rythmManagerData.drumHits}")
+    Log.d("RythmBox", "${rythmManagerData.drumHits.size}")
     Box (
         modifier = Modifier
             .background(color)
@@ -92,14 +91,25 @@ fun RythmBox(color : Color, width : Dp, height : Dp, rythmManagerData : RythmMan
         contentAlignment = Alignment.TopCenter
     )
     {
-        for(each in rythmManagerData.drumHits){
+//        for(each in rythmManagerData.drumHits){
+////            Log.d("RythmBox", "${each.hitTime}")
+//            drumPoint(
+//                optimalHit = 20.dp,
+//                tolerance = 20.dp,
+//                offsetY = (each.hitTime - rythmManagerData.timeData.currentTime).toInt().dp / 100)
+//        }
+        if(!rythmManagerData.drumHits.isEmpty()) {
             drumPoint(
                 optimalHit = 20.dp,
                 tolerance = 20.dp,
-                offsetY = height/2)
+                offsetY = 500.dp,
+                offsetX = width / 4,
+                side = rythmManagerData.drumHits.last().side
+            )
         }
     }
 }
+
 
 @Composable
 fun ShowTimer(timeData: TimeData, offsetY : Dp){

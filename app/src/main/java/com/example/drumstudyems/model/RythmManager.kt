@@ -48,8 +48,25 @@ class RythmManager(timer: Timer) {
                 Log.d("RythmManager", "${activeHits}")
             }
         }
-        RythmManagerData(time, activeHits)
+        for (hitTime in acitveRythm.rightDrum) {
+            if (
+                hitTime <= timeInSegment &&
+                hitTime >= timeInSegment - time.deltaTime
+            ) {
+//                Log.d("RythmManager", "hit geaddet")
+                activeHits.add(
+                    DrumHit(
+                        segment = rythmSegment,
+                        hitTime = rythmSegment * acitveRythm.tactDuration + hitTime,
+                        side = LeftRight.Right
+                    )
+                )
+                Log.d("RythmManager", "${activeHits}")
+            }
+        }
+        RythmManagerData(time, activeHits.toList())
     }
+
 
     fun getActiveRythmFlow() = activeRythmFlow
 
