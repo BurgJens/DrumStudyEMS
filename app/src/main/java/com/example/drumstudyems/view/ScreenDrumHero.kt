@@ -45,7 +45,7 @@ fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
 
     ScreenDrumHero(
         rythmManagerData,
-        2000
+        10000
     )
 }
 
@@ -59,6 +59,9 @@ fun ScreenDrumHero(
     val screenWidth = configuration.screenWidthDp.dp
 
     val heightInMS = screenHeight / timeFrame
+
+
+
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -82,7 +85,7 @@ fun ScreenDrumHero(
 
 @Composable
 fun RythmBox(color : Color, width : Dp, height : Dp, rythmManagerData : RythmManagerData){
-    Log.d("RythmBox", "${rythmManagerData.drumHits.size}")
+//    Log.d("RythmBox", "${rythmManagerData.drumHits.size}")
     Box (
         modifier = Modifier
             .background(color)
@@ -91,22 +94,29 @@ fun RythmBox(color : Color, width : Dp, height : Dp, rythmManagerData : RythmMan
         contentAlignment = Alignment.TopCenter
     )
     {
-//        for(each in rythmManagerData.drumHits){
-////            Log.d("RythmBox", "${each.hitTime}")
-//            drumPoint(
-//                optimalHit = 20.dp,
-//                tolerance = 20.dp,
-//                offsetY = (each.hitTime - rythmManagerData.timeData.currentTime).toInt().dp / 100)
-//        }
-        if(!rythmManagerData.drumHits.isEmpty()) {
+        for(each in rythmManagerData.drumHits){
+//            Log.d("RythmBox", "${each.hitTime}")
+            val posY = ((rythmManagerData.timeData.currentTime - each.hitTime)).toInt().dp
+//            Log.d("RythmBox", "pos =  ${posY}")
+//            Log.d("RythmBox", "currentTime =  ${rythmManagerData.timeData.currentTime}")
+//            Log.d("RythmBox", "hittime =  ${each.hitTime}")
             drumPoint(
                 optimalHit = 20.dp,
                 tolerance = 20.dp,
-                offsetY = 500.dp,
                 offsetX = width / 4,
-                side = rythmManagerData.drumHits.last().side
-            )
+                offsetY = posY,
+                side = rythmManagerData.drumHits.last().side)
+
         }
+//        if(!rythmManagerData.drumHits.isEmpty()) {
+//            drumPoint(
+//                optimalHit = 20.dp,
+//                tolerance = 20.dp,
+//                offsetY = 500.dp,
+//                offsetX = width / 4,
+//                side = rythmManagerData.drumHits.last().side
+//            )
+//        }
     }
 }
 

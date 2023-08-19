@@ -10,16 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.drumstudyems.model.LeftRight
-import com.example.drumstudyems.ui.theme.DrumStudyEMSTheme
 
 @Composable
 fun drumPoint (optimalHit : Dp, tolerance : Dp, offsetY : Dp, offsetX : Dp, side : LeftRight){
     val side = when(side){
-        LeftRight.Right -> 1
+        LeftRight.RIGHT -> 1
         LeftRight.LEFT -> -1
     }
     Box(
