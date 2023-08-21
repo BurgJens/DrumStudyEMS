@@ -18,37 +18,39 @@ class RythmManager(timer: Timer, timeFrame : Long) {
 
 
 
-    private val activeRythmFlow = timer.getTimeDataFlow().map { time ->
+    private val activeRythmFlow = timer.getTimeDataFlow().map { timeData ->
 
-        val rythmSegment = time.currentTime / acitveRythm.tactDuration
+        val rythmSegment = timeData.currentTime / acitveRythm.tactDuration
         Log.d("activeRythmFlow", "rythmSegment" + rythmSegment)
-        val timeInSegment = time.currentTime.rem(acitveRythm.tactDuration)
+        val timeInSegment = timeData.currentTime.rem(acitveRythm.tactDuration)
         Log.d("activeRythmFlow", "timeInSegment" + timeInSegment)
+
+        val test = timeFrame/3*2
 
         for (each in acitveRythm.notes) {
             if (
-                each.first <= timeInSegment &&
-                each.first >= timeInSegment - time.deltaTime
+                each.first+test <= timeInSegment+test &&
+                each.first+test >= timeInSegment - timeData.deltaTime +test
             ) {
 //                Log.d("RythmManager", "hit geaddet")
                 activeHits.add(
                     DrumHit(
                         segment = rythmSegment,
-                        hitTime = rythmSegment * acitveRythm.tactDuration + each.first,
+                        hitTime = rythmSegment * acitveRythm.tactDuration + each.first + test,
                         side = each.second
                     )
                 )
 //                Log.d("RythmManager", "${activeHits}")
             }
         }
-        for(each in activeHits){
-            if(each.hitTime > time.currentTime + each.hitTime){
-                oldHits.add(each)
-                activeHits.remove(each)
-            }
-        }
+//        for(each in activeHits){
+//            if(each.hitTime < timeData.currentTime + each.hitTime){
+//                oldHits.add(each)
+//                activeHits.remove(each)
+//            }
+//        }
 
-        RythmManagerData(time, activeHits.toList())
+        RythmManagerData(timeData, activeHits.toList())
     }
 
 

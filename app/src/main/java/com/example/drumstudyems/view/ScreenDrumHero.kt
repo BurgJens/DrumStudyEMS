@@ -3,11 +3,9 @@ package com.example.drumstudyems.view
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -17,11 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.drumstudyems.model.DrumHit
 import com.example.drumstudyems.model.RythmManagerData
 import com.example.drumstudyems.model.TimeData
 import com.example.drumstudyems.view.elements.drumPoint
@@ -45,38 +40,42 @@ fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
 
     ScreenDrumHero(
         rythmManagerData,
-        10000
+        5000L,
+        true
     )
 }
 
 @Composable
 fun ScreenDrumHero(
     rythmManagerData: RythmManagerData,
-    timeFrame: Int
+    timeFrame: Long,
+    debug : Boolean
 ){
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val heightInMS = screenHeight / timeFrame
-
-
-
-
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.BottomCenter
     )
     {
 
-        RythmBox(Color.LightGray, screenWidth, screenHeight, rythmManagerData)
+        RythmBox(Color.LightGray, screenWidth, screenHeight, rythmManagerData, timeFrame, debug)
 
         Divider(
             modifier = Modifier
                 .height(10.dp)
-                .offset(y = screenHeight / 3 * 2),
+                .offset(y = -screenHeight / 3),
             color = Color.Cyan,
         )
+        if (debug){
+            Text(
+                text = "${rythmManagerData.timeData.currentTime}",
+                modifier = Modifier.offset(y = -screenHeight / 3)
+            )
+        }
+
 
         ShowTimer(rythmManagerData.timeData, screenHeight/100*95)
     }
@@ -84,39 +83,46 @@ fun ScreenDrumHero(
 }
 
 @Composable
-fun RythmBox(color : Color, width : Dp, height : Dp, rythmManagerData : RythmManagerData){
+fun RythmBox(
+    color : Color,
+    screenWidth : Dp,
+    screenHeight : Dp,
+    rythmManagerData : RythmManagerData,
+    timeFrame: Long,
+    debug: Boolean
+    ){
+    val upperEdge = rythmManagerData.timeData.currentTime + (timeFrame/3*2)
+    val lowerEdge = rythmManagerData.timeData.currentTime - (timeFrame/3)
+
+    Log.d("dingDong", "upperEdge $upperEdge")
+    Log.d("dingDong", "lowerEdge $lowerEdge")
+    Log.d("dingDong", "currentTime ${rythmManagerData.timeData.currentTime}")
+
 //    Log.d("RythmBox", "${rythmManagerData.drumHits.size}")
     Box (
         modifier = Modifier
             .background(color)
-            .width(width)
-            .height(height),
+            .width(screenWidth)
+            .height(screenHeight),
         contentAlignment = Alignment.TopCenter
     )
     {
         for(each in rythmManagerData.drumHits){
-//            Log.d("RythmBox", "${each.hitTime}")
-            val posY = ((rythmManagerData.timeData.currentTime - each.hitTime)).toInt().dp
-//            Log.d("RythmBox", "pos =  ${posY}")
-//            Log.d("RythmBox", "currentTime =  ${rythmManagerData.timeData.currentTime}")
-//            Log.d("RythmBox", "hittime =  ${each.hitTime}")
+            val t = (each.hitTime - upperEdge).toDouble() / (lowerEdge - upperEdge).toDouble()
+//            val posY =
+//                500.dp
+//            Log.d("$each", "${t}")
+            val posY = screenHeight.times(t.toFloat())
             drumPoint(
                 optimalHit = 20.dp,
                 tolerance = 20.dp,
-                offsetX = width / 4,
+                offsetX = screenWidth / 4,
                 offsetY = posY,
-                side = rythmManagerData.drumHits.last().side)
+                side = each.side,
+                debug = debug,
+                hitTime = each.hitTime)
 
         }
-//        if(!rythmManagerData.drumHits.isEmpty()) {
-//            drumPoint(
-//                optimalHit = 20.dp,
-//                tolerance = 20.dp,
-//                offsetY = 500.dp,
-//                offsetX = width / 4,
-//                side = rythmManagerData.drumHits.last().side
-//            )
-//        }
     }
 }
 

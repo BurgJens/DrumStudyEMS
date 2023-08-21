@@ -8,7 +8,7 @@ class DrumStudyViewModel : ViewModel(){
 
     val timer = Timer(2000L, 16)
 
-    val rythmManager = RythmManager(timer, 10000L)
+    val rythmManager = RythmManager(timer, 5000L)
 
     fun getRythmManagerData() = rythmManager.getActiveRythmFlow()
 
