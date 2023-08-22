@@ -14,5 +14,7 @@ class DrumStudyViewModel : ViewModel(){
 
     fun startTimer() = timer.getTimeDataFlow()
 
-
+    fun debugButtonInpug(currentTime : Long){
+        rythmManager.makeInput(currentTime)
+    }
 }

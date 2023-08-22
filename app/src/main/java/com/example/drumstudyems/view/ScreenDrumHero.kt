@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Divider
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
@@ -43,7 +47,8 @@ fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
         timeFrame = 5000L,
         debug = true,
         optimalHitTimeFrame = 200L,
-        hitTimeTolerance = 100L
+        hitTimeTolerance = 100L,
+        {drumStudyViewModel.debugButtonInpug(rythmManagerData.timeData.currentTime)}
     )
 }
 
@@ -53,7 +58,8 @@ fun ScreenDrumHero(
     timeFrame: Long,
     debug : Boolean,
     optimalHitTimeFrame : Long,
-    hitTimeTolerance : Long
+    hitTimeTolerance : Long,
+    debugButtonInput : () -> Unit
 ){
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -66,7 +72,7 @@ fun ScreenDrumHero(
     {
 
         RythmBox(
-            Color.LightGray,
+            Color.White,
             screenWidth,
             screenHeight,
             rythmManagerData,
@@ -77,18 +83,29 @@ fun ScreenDrumHero(
 
         Divider(
             modifier = Modifier
-                .height(10.dp)
-                .offset(y = -screenHeight / 3),
-            color = Color.Cyan,
+                .height(5.dp)
+                .offset(y = -screenHeight / 3 + 5.dp/2)
+                .alpha(0.5f),
+            color = Color.Black,
         )
         if (debug){
             Text(
                 text = "${rythmManagerData.timeData.currentTime}",
-                modifier = Modifier.offset(y = -screenHeight / 3)
+                modifier = Modifier
+                    .offset(y = -screenHeight / 3),
+                color = Color.LightGray
             )
+            val buttonHeight = screenHeight/20
+            OutlinedButton(
+                onClick = debugButtonInput,
+                modifier = Modifier
+                    .width(screenWidth)
+                    .offset(y = -screenHeight / 3 + buttonHeight/2)
+                    .height(buttonHeight)
+                    .alpha(0.5f),
+            ){}
         }
-
-
+        
         ShowTimer(rythmManagerData.timeData, screenHeight/100*95)
     }
 
@@ -168,7 +185,10 @@ fun drumPoint (
         toleranceLine(optimalHit, tolerance)
         drumCircle(optimalHit)
         if (debug){
-            Text(text = "$hitTime")
+            Text(
+                text = "$hitTime",
+                color = Color.LightGray
+            )
         }
     }
 }

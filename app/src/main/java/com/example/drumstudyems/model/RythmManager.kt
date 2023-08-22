@@ -14,6 +14,8 @@ class RythmManager(timer: Timer, timeFrame : Long) {
 
     val inputFlow = timer.getTimeDataFlow()
 
+    val input = mutableListOf<Long>()
+
 
 
 
@@ -44,6 +46,10 @@ class RythmManager(timer: Timer, timeFrame : Long) {
 //            }
 //        }
         RythmManagerData(timeData, activeHits.toList())
+    }
+
+    fun makeInput(currentTime : Long){
+        input.add(currentTime)
     }
 
 
