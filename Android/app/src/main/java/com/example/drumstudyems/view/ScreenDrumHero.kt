@@ -45,7 +45,7 @@ fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
     ScreenDrumHero(
         rythmManagerData = rythmManagerData,
         timeFrame = 5000L,
-        debug = true,
+        debug = false,
         optimalHitTimeFrame = 200L,
         hitTimeTolerance = 100L,
         {drumStudyViewModel.debugButtonInpug(rythmManagerData.timeData.currentTime)}
