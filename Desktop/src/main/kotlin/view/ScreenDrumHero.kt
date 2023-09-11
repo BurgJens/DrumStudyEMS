@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
@@ -18,18 +19,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.WindowState
 import com.example.drumstudyems.model.LeftRight
 import com.example.drumstudyems.model.RythmManagerData
 import com.example.drumstudyems.model.TimeData
 import kotlinx.coroutines.Dispatchers
 import viewmodel.DrumStudyViewModel
 import windowSize
-import java.awt.Toolkit.getDefaultToolkit
 
 
 @Composable
-fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
+fun ScreenDrumHeroData(
+    drumStudyViewModel: DrumStudyViewModel,
+    navigateBack : () -> Unit,
+){
 
     val rythmManagerData by
     drumStudyViewModel.getRythmManagerData()
@@ -47,7 +49,8 @@ fun ScreenDrumHeroData(drumStudyViewModel: DrumStudyViewModel){
         debug = true,
         optimalHitTimeFrame = 200L,
         hitTimeTolerance = 100L,
-        {drumStudyViewModel.debugButtonInpug(rythmManagerData.timeData.currentTime)}
+        {drumStudyViewModel.debugButtonInpug(rythmManagerData.timeData.currentTime)},
+        navigateBack
     )
 }
 
@@ -58,7 +61,8 @@ fun ScreenDrumHero(
     debug : Boolean,
     optimalHitTimeFrame : Long,
     hitTimeTolerance : Long,
-    debugButtonInput : () -> Unit
+    debugButtonInput : () -> Unit,
+    navigateBack : () -> Unit,
 ){
 
     val screenSize = windowSize
@@ -109,6 +113,11 @@ fun ScreenDrumHero(
         }
         
         ShowTimer(rythmManagerData.timeData, screenHeight/100*95)
+
+        Button(
+            onClick = {navigateBack()},
+            modifier = Modifier.align(Alignment.BottomStart)
+        ){}
     }
 
 }

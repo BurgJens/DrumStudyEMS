@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.example.drumstudyems.view.ScreenDrumHeroData
+import view.AppNavigation
 import viewmodel.DrumStudyViewModel
 
 val windowSize = DpSize(1920.dp,1080.dp)
@@ -16,9 +16,8 @@ val windowSize = DpSize(1920.dp,1080.dp)
 fun App() {
     val drumStudyViewModel = DrumStudyViewModel()
 
-
     MaterialTheme {
-        ScreenDrumHeroData(drumStudyViewModel)
+        AppNavigation(drumStudyViewModel)
     }
 }
 
