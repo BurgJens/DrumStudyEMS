@@ -1,4 +1,4 @@
-package com.example.drumstudyems.view
+package view
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -19,9 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.drumstudyems.model.LeftRight
-import com.example.drumstudyems.model.RythmManagerData
-import com.example.drumstudyems.model.TimeData
+import model.LeftRight
+import model.RythmManagerData
+import model.TimeData
 import kotlinx.coroutines.Dispatchers
 import viewmodel.DrumStudyViewModel
 import windowSize
@@ -69,7 +69,6 @@ fun ScreenDrumHero(
     val screenHeight = screenSize.height
     val screenWidth = screenSize.width
 
-    println(screenSize)
 
     Box(
         modifier = Modifier.fillMaxSize(),

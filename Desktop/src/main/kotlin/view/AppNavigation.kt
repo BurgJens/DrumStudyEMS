@@ -3,8 +3,6 @@ package view
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.example.drumstudyems.view.ScreenDrumHeroData
-import com.example.drumstudyems.view.ScreenStartHandler
 import viewmodel.DrumStudyViewModel
 
 sealed class NavScreen(val route : String){
@@ -21,10 +19,16 @@ fun AppNavigation(drumStudyViewModel: DrumStudyViewModel){
     }
 
     when(screen.value){
-        NavScreen.Start.route -> ScreenStartHandler {changeScreen(NavScreen.Drum.route)}
-        NavScreen.Drum.route -> ScreenDrumHeroData(
-            drumStudyViewModel,
-            {changeScreen(NavScreen.Start.route)}
+        NavScreen.Start.route ->
+            ScreenStartHandler {
+                drumStudyViewModel.startDrumListener()
+                changeScreen(NavScreen.Drum.route)
+            }
+
+        NavScreen.Drum.route ->
+            ScreenDrumHeroData(
+                drumStudyViewModel,
+                {changeScreen(NavScreen.Start.route)}
         )
     }
 

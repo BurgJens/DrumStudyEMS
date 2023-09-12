@@ -1,4 +1,4 @@
-package com.example.drumstudyems.model
+package model
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flow

@@ -1,4 +1,4 @@
-package com.example.drumstudyems.model
+package model
 
 enum class LeftRight{
     LEFT,

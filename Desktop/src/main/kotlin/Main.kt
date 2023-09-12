@@ -8,6 +8,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import view.AppNavigation
 import viewmodel.DrumStudyViewModel
+import javax.sound.midi.*
 
 val windowSize = DpSize(1920.dp,1080.dp)
 
@@ -23,6 +24,14 @@ fun App() {
 
 
 fun main() = application {
+
+    val midiDeviceInfo = MidiSystem.getMidiDeviceInfo()
+
+    for (each in midiDeviceInfo){
+        println("${each.name}    ${each.description}    ${each.version}    ${each.vendor}")
+    }
+
+
     Window(
         onCloseRequest = ::exitApplication,
         state = WindowState(size = windowSize)

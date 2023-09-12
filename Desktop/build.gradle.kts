@@ -22,18 +22,13 @@ dependencies {
     implementation(compose.desktop.currentOs)
 
     val precompose_version = "1.5.0"
-
-    // Please do remember to add compose.foundation and compose.animation
     api(compose.foundation)
     api(compose.animation)
-//...
     api("moe.tlaster:precompose:$precompose_version")
+    api("moe.tlaster:precompose-viewmodel:$precompose_version")
 
-// api("moe.tlaster:precompose-molecule:$precompose_version") // For Molecule intergration
-
-    api("moe.tlaster:precompose-viewmodel:$precompose_version") // For ViewModel intergration
-
-// api("moe.tlaster:precompose-koin:$precompose_version") // For Koin intergration
+    implementation("dev.atsushieno:ktmidi:0.4.0")
+    implementation("dev.atsushieno:ktmidi-jvm-desktop:0.4.0")
 }
 
 compose.desktop {
