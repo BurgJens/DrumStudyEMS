@@ -20,7 +20,9 @@ fun AppNavigation(drumStudyViewModel: DrumStudyViewModel){
 
     when(screen.value){
         NavScreen.Start.route ->
-            ScreenStartHandler {
+            ScreenStartHandler (
+                drumStudyViewModel
+            ){
                 drumStudyViewModel.startDrumListener()
                 changeScreen(NavScreen.Drum.route)
             }

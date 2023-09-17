@@ -2,22 +2,22 @@ package model
 
 import com.example.drumstudyems.model.BaseRythm
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 
-data class RythmManagerData(val timeData: TimeData, val drumHits : List<DrumHit>)
+data class RythmManagerData(val timeData: TimeData, val drumHits : List<DrumHit>, val input : List<Pair<LeftRight, Long>>)
 
 class RythmManager(timer: Timer, timeFrame : Long) {
 
     private var acitveRythm = BaseRythm()
 
     val activeHits = mutableListOf<DrumHit>()
-
     val oldHits = mutableListOf<DrumHit>()
 
     val inputFlow = timer.getTimeDataFlow()
 
-    val input = mutableListOf<Long>()
+    val activeInput = mutableListOf<Pair<LeftRight, Long>>()
+    val oldInput = mutableListOf<Pair<LeftRight, Long>>()
 
 
     private val leftDrumInput = MutableStateFlow(false)
@@ -33,26 +33,22 @@ class RythmManager(timer: Timer, timeFrame : Long) {
         rightDrumInput.value = value
     }
 
-    private val activeRythmFlow = timer.getTimeDataFlow().map { timeData ->
-
+    private val activeRythmFlow = timer.getTimeDataFlow().onEach { timeData ->
         val rythmSegment = timeData.currentTime / acitveRythm.tactDuration
         val timeInSegment = timeData.currentTime.rem(acitveRythm.tactDuration)
         val timeOffset = timeFrame/3*2
 
-
-        if (leftDrumInput.value) {
+        if (leftDrumInput.value && (timeData.currentTime - lastInputLeft) > 20L) {
             println("left")
             leftDrumInput.value = false
-            println(lastInputLeft)
             lastInputLeft = timeData.currentTime
-            println(lastInputLeft)
+            activeInput.add(Pair(LeftRight.LEFT,lastInputLeft))
         }
-        if (rightDrumInput.value) {
+        if (rightDrumInput.value && (timeData.currentTime - lastInputLeft) > 20L) {
             println("right")
             rightDrumInput.value = false
-            println(lastInputRight)
             lastInputRight = timeData.currentTime
-            println(lastInputRight)
+            activeInput.add(Pair(LeftRight.RIGHT,lastInputRight))
         }
 
         for (each in acitveRythm.notes) {
@@ -69,18 +65,36 @@ class RythmManager(timer: Timer, timeFrame : Long) {
                 )
             }
         }
-//        for(each in activeHits){
-//            if(each.hitTime < timeData.currentTime){
-//                oldHits.add(each)
-//                activeHits.remove(each)
-//            }
-//        }
-        RythmManagerData(timeData, activeHits.toList())
-    }.onCompletion { println("ENDE") }
+        val tempHits = mutableListOf<DrumHit>()
+        for(each in activeHits){
+            if(each.hitTime < timeData.currentTime - timeFrame/3){
+                tempHits.add(each)
+            }
+        }
+        for (each in tempHits){
+            oldHits.add(each)
+            activeHits.remove(each)
+        }
+        val tempInput = mutableListOf<Pair<LeftRight, Long>>()
+        for(each in activeInput){
+            if(each.second < timeData.currentTime - timeFrame/3){
+                tempInput.add(each)
+            }
+        }
+        for (each in tempInput){
+            oldInput.add(each)
+            activeInput.remove(each)
+        }
 
-    fun makeInput(currentTime : Long){
-        input.add(currentTime)
+    }.onCompletion {
+        activeHits.clear()
     }
+
+//    fun makeInput(currentTime : Long){
+//        lastInputLeft = -1L
+//        lastInputRight = -1L
+//        input.add(currentTime)
+//    }
 
 
     fun getActiveRythmFlow() = activeRythmFlow

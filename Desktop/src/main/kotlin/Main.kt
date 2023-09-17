@@ -10,7 +10,9 @@ import view.AppNavigation
 import viewmodel.DrumStudyViewModel
 import javax.sound.midi.*
 
-val windowSize = DpSize(1920.dp,1080.dp)
+val appWindowSize = DpSize(1920.dp,1080.dp)
+val appTimeFrame = 7500L
+val appDebugMode = false
 
 @Composable
 @Preview
@@ -34,7 +36,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        state = WindowState(size = windowSize)
+        state = WindowState(size = appWindowSize)
     ) {
         App()
     }

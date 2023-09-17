@@ -19,12 +19,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import appDebugMode
+import appTimeFrame
 import model.LeftRight
 import model.RythmManagerData
 import model.TimeData
 import kotlinx.coroutines.Dispatchers
 import viewmodel.DrumStudyViewModel
-import windowSize
+import appWindowSize
 
 
 @Composable
@@ -32,21 +34,18 @@ fun ScreenDrumHeroData(
     drumStudyViewModel: DrumStudyViewModel,
     navigateBack : () -> Unit,
 ){
-
-    val rythmManagerData by
-    drumStudyViewModel.getRythmManagerData()
-        .collectAsState(initial = RythmManagerData(
-            timeData = TimeData(0L,0L),
-            drumHits = listOf()
-        ), Dispatchers.Main)
-
-//    val test by
-//    drumStudyViewModel.startTimer().collectAsState(initial = TimeData(0L,0L))
+    val rythmManagerData by drumStudyViewModel.getRythmManagerData()
+        .collectAsState(
+            initial = RythmManagerData(
+                timeData = TimeData(0L,0L),
+                drumHits = listOf(),
+                input = listOf()
+            ), Dispatchers.Main
+        )
 
     ScreenDrumHero(
         rythmManagerData = rythmManagerData,
-        timeFrame = 5000L,
-        debug = true,
+        timeFrame = appTimeFrame,
         optimalHitTimeFrame = 200L,
         hitTimeTolerance = 100L,
         {drumStudyViewModel.debugButtonInpug(rythmManagerData.timeData.currentTime)},
@@ -58,14 +57,13 @@ fun ScreenDrumHeroData(
 fun ScreenDrumHero(
     rythmManagerData: RythmManagerData,
     timeFrame: Long,
-    debug : Boolean,
     optimalHitTimeFrame : Long,
     hitTimeTolerance : Long,
     debugButtonInput : () -> Unit,
     navigateBack : () -> Unit,
 ){
 
-    val screenSize = windowSize
+    val screenSize = appWindowSize
     val screenHeight = screenSize.height
     val screenWidth = screenSize.width
 
@@ -82,18 +80,10 @@ fun ScreenDrumHero(
             screenHeight,
             rythmManagerData,
             timeFrame,
-            debug,
             optimalHitTimeFrame,
             hitTimeTolerance)
 
-        Divider(
-            modifier = Modifier
-                .height(5.dp)
-                .offset(y = -screenHeight / 3 + 5.dp/2)
-                .alpha(0.5f),
-            color = Color.Black,
-        )
-        if (debug){
+        if (appDebugMode){
             Text(
                 text = "${rythmManagerData.timeData.currentTime}",
                 modifier = Modifier
@@ -110,8 +100,6 @@ fun ScreenDrumHero(
                     .alpha(0.5f),
             ){}
         }
-        
-        ShowTimer(rythmManagerData.timeData, screenHeight/100*95)
 
         Button(
             onClick = {navigateBack()},
@@ -128,7 +116,6 @@ fun RythmBox(
     screenHeight : Dp,
     rythmManagerData : RythmManagerData,
     timeFrame: Long,
-    debug: Boolean,
     optimalHitTimeFrame : Long,
     hitTimeTolerance : Long
     ){
@@ -155,11 +142,22 @@ fun RythmBox(
                 offsetX = screenWidth / 4,
                 offsetY = posY,
                 side = each.side,
-                debug = debug,
                 hitTime = each.hitTime)
 
         }
+        for(each in rythmManagerData.input){
+            val t = (each.second - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
+            val posY = screenHeight.times(t)
+            drumHit(
+                offsetX = screenWidth / 4,
+                offsetY = posY,
+                side = each.first
+            )
+        }
+
+        currentTimeLine(rythmManagerData)
     }
+
 }
 
 
@@ -180,7 +178,6 @@ fun drumPoint (
     offsetY : Dp,
     offsetX : Dp,
     side : LeftRight,
-    debug : Boolean,
     hitTime : Long
 ){
     val side = when(side){
@@ -194,13 +191,33 @@ fun drumPoint (
     ){
         toleranceLine(optimalHit, tolerance)
         drumCircle(optimalHit)
-        if (debug){
+        if (appDebugMode){
             Text(
                 text = "$hitTime",
                 color = Color.LightGray
             )
         }
     }
+}
+
+@Composable
+fun drumHit(
+    offsetY : Dp,
+    offsetX : Dp,
+    side : LeftRight,
+){
+    val side = when(side){
+        LeftRight.RIGHT -> 1
+        LeftRight.LEFT -> -1
+    }
+    Divider(
+        modifier = Modifier
+            .offset(y = offsetY, x = offsetX * side)
+            .width(75.dp)
+            .height(5.dp),
+        color = Color.Black
+    )
+
 }
 
 @Composable
@@ -223,6 +240,23 @@ fun toleranceLine (optimalHit : Dp, tolerance: Dp){
         color = Color.Red,
 
         )
+}
+
+@Composable
+fun currentTimeLine(rythmManagerData : RythmManagerData){
+    val upperEdge = rythmManagerData.timeData.currentTime + (appTimeFrame/3*2)
+    val lowerEdge = rythmManagerData.timeData.currentTime - (appTimeFrame/3)
+
+    val t = (rythmManagerData.timeData.currentTime - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
+    val posY = appWindowSize.height.times(t)
+
+    Divider(
+        modifier = Modifier
+            .height(5.dp)
+            .offset(y = posY)
+            .alpha(0.5f),
+        color = Color.Black,
+    )
 }
 
 

@@ -3,6 +3,7 @@ package model
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
 
 
 data class TimeData(val currentTime : Long, val deltaTime : Long)
