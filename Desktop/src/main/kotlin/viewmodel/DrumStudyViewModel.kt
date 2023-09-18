@@ -12,22 +12,28 @@ import kotlinx.coroutines.launch
 import model.LogWriter
 import model.RythmManagerData
 import moe.tlaster.precompose.viewmodel.ViewModel
+import java.util.concurrent.atomic.AtomicBoolean
 
 class DrumStudyViewModel : ViewModel() {
 
     private val timer = Timer(2000L, 16)
-    private val rythmManager = RythmManager(timer, appTimeFrame)
+    private val rythmManager = RythmManager(timer, appTimeFrame, {writeLog()})
     private val midiHandler = MidiHandler()
     private val logWriter = LogWriter()
 
     val subjectName = MutableStateFlow("Subject01")
 
-    val rythmFlow = rythmManager.getActiveRythmFlow().map {
-            timeData -> RythmManagerData(timeData, rythmManager.activeHits.toList(), rythmManager.activeInput.toList())
+    val logAfter = AtomicBoolean(false)
+
+    val rythmFlow = rythmManager.getActiveRythmFlow().map {timeData ->
+        RythmManagerData(
+            timeData,
+            rythmManager.activeDrumNotes.toList(),
+            rythmManager.activeDrumHits.toList(),
+            rythmManager.metronome.toList()
+        )
     }
     fun getRythmManagerData() = rythmFlow
-
-    fun startTimer() = timer.getTimeDataFlow()
 
     fun debugButtonInpug(currentTime : Long){
 //        rythmManager.makeInput(currentTime)
@@ -37,12 +43,8 @@ class DrumStudyViewModel : ViewModel() {
         subjectName.value = newName
     }
 
-    fun write(){
-        logWriter.logData(
-            folerName = subjectName.value,
-            fileName = "test",
-            data = ""
-        )
+    fun writeLog(){
+        if (logAfter.get()) logWriter.logData(subjectName.value,rythmManager.getActiveRythmName(),rythmManager.oldDrumNotes,rythmManager.oldDrumHits)
     }
 
     fun startDrumListener(){

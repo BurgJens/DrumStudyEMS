@@ -22,7 +22,7 @@ fun ScreenStartHandler(
     ScreenStartRender(
         navigateStart = navigateFirst,
         subjectname = subjectname.value,
-        write = {drumStudyViewModel.write()},
+        write = {bool : Boolean -> drumStudyViewModel.logAfter.set(bool)},
         onNameChange = {newName : String-> drumStudyViewModel.changeSubjectName(newName)}
     )
 }
@@ -30,7 +30,7 @@ fun ScreenStartHandler(
 @Composable
 fun ScreenStartRender(
     navigateStart : () -> Unit,
-    write : () -> Unit,
+    write : (Boolean) -> Unit,
     subjectname : String,
     onNameChange : (String) -> Unit
 ){
@@ -43,6 +43,7 @@ fun ScreenStartRender(
         var subjectName by remember { mutableStateOf(subjectname) }
         Button(
             onClick = {
+                write(false)
                 onNameChange(subjectName)
                 navigateStart()
             }
@@ -51,9 +52,13 @@ fun ScreenStartRender(
         }
 
         Button(
-            onClick = write
+            onClick = {
+                write(true)
+                onNameChange(subjectName)
+                navigateStart()
+            }
         ){
-            Text(text = "Write")
+            Text(text = "Start and Log")
         }
 
 
