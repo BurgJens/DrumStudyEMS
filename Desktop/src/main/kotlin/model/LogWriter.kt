@@ -42,7 +42,7 @@ class LogWriter {
         for (each in drumNotes){
             log += "${each.side} ${each.playTime}\n"
         }
-        writeLog(subjectName, "${subjectName}_${rythmName}_drumNotes",log )
+        writeLog("${subjectName}/${subjectName}_${rythmName}", "${subjectName}_${rythmName}_drumNotes",log )
     }
 
     fun logDrumHits(subjectName : String, rythmName : String, drumNotes : List<DrumHit>){
@@ -50,7 +50,7 @@ class LogWriter {
         for (each in drumNotes){
             log += "${each.side} ${each.hitTime}\n"
         }
-        writeLog(subjectName, "${subjectName}_${rythmName}_drumHits",log )
+        writeLog("${subjectName}/${subjectName}_${rythmName}", "${subjectName}_${rythmName}_drumHits",log )
     }
 
     fun createStatistics(drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
