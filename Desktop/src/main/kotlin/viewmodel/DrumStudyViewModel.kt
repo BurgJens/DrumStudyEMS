@@ -15,15 +15,16 @@ import java.util.concurrent.atomic.AtomicBoolean
 class DrumStudyViewModel : ViewModel() {
 
 
-
+    private val configManager = ConfigManager()
     private val timer = Timer(2000L, timerPrecision)
     private val rythmManager = RythmManager(timer, appTimeFrame, {writeLog()})
     private val emsHandler = EmsHandler(timer)
     private val midiHandler = MidiHandler()
     private val logWriter = LogWriter()
 
+    val subjectName = MutableStateFlow(configManager.configData.subjectName)
 
-    val subjectName = MutableStateFlow("Subject01")
+    val emsIntensityMax = MutableStateFlow(configManager.configData.maxIntensity)
 
     val logAfter = AtomicBoolean(false)
 
@@ -43,8 +44,14 @@ class DrumStudyViewModel : ViewModel() {
 //        rythmManager.makeInput(currentTime)
     }
 
+    fun changeEmsIntensityMax(newValue : Int){
+        emsIntensityMax.value = newValue
+        saveCurrentConfig()
+    }
+
     fun changeSubjectName(newName : String){
         subjectName.value = newName
+        saveCurrentConfig()
     }
 
     fun setRythm(rythmsEnum : RythmsEnum){
@@ -67,6 +74,15 @@ class DrumStudyViewModel : ViewModel() {
                 if (note == 45) rythmManager.setRightDrumInput(true)
             }
         }
+    }
+
+    fun resetConfigData() = configManager.resetConfigData()
+
+    fun saveCurrentConfig(){
+        configManager.writeNewConfigData(ConfigData(
+            maxIntensity = emsIntensityMax.value,
+            subjectName = subjectName.value
+        ))
     }
 
 }

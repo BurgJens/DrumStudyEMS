@@ -15,15 +15,23 @@ import viewmodel.DrumStudyViewModel
 @Composable
 fun ScreenEMSsetup(drumStudyViewModel: DrumStudyViewModel, navigateBack : () -> Unit){
 
+    val startIntensity = drumStudyViewModel.emsIntensityMax.collectAsState()
+
     ScreenEMSsetupRender(
-        navigateBack,
-        {cmd : String -> drumStudyViewModel.sendEMScommand(cmd)}
+        startIntensity = startIntensity.value,
+        navigateBack = navigateBack,
+        saveCurrentSettings = {value : Int ->
+            drumStudyViewModel.changeEmsIntensityMax(value)
+        },
+        sendCMD = {cmd : String -> drumStudyViewModel.sendEMScommand(cmd)}
     )
 }
 
 @Composable
 fun ScreenEMSsetupRender(
+    startIntensity : Int,
     navigateBack : () -> Unit,
+    saveCurrentSettings : (Int) -> Unit,
     sendCMD : (String) -> Unit
 ){
 
@@ -34,7 +42,7 @@ fun ScreenEMSsetupRender(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         var channel by remember { mutableStateOf("1") }
-        var intensity by remember { mutableStateOf("010") }
+        var intensity by remember { mutableStateOf("$startIntensity") }
         var duration by remember { mutableStateOf("1000") }
 
         Row(
@@ -83,14 +91,20 @@ fun ScreenEMSsetupRender(
             }
         }
         Button(
-            onClick = {sendCMD("C${channel.toInt()-1}I${intensity}T${duration}G")},
+            onClick = {
+                sendCMD("C${channel.toInt()-1}I${intensity}T${duration}G")
+                saveCurrentSettings(intensity.toInt())
+                      },
             modifier = Modifier
                 .width(200.dp)
         ){
             Text(text = "Start")
         }
         Button(
-            onClick = navigateBack,
+            onClick = {
+                saveCurrentSettings(intensity.toInt())
+                navigateBack()
+            },
             modifier = Modifier
                 .width(200.dp)
         ){

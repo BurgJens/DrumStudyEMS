@@ -1,12 +1,15 @@
 package view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,9 +28,14 @@ fun ScreenStartHandler(
     ScreenStartRender(
         navigateStart = navigateDrumHero,
         subjectname = subjectname.value,
-        write = {bool : Boolean -> drumStudyViewModel.logAfter.set(bool)},
-        onNameChange = {newName : String-> drumStudyViewModel.changeSubjectName(newName)},
-        changeRythm = {rythm : RythmsEnum -> drumStudyViewModel.setRythm(rythm)},
+        write = {bool : Boolean ->
+            drumStudyViewModel.logAfter.set(bool)},
+        onNameChange = {newName : String->
+            drumStudyViewModel.changeSubjectName(newName)
+                       },
+        changeRythm = {rythm : RythmsEnum ->
+            drumStudyViewModel.setRythm(rythm)
+                      },
         navigateEMSsetup = navigateEMSsetup
     )
 }
@@ -65,7 +73,7 @@ fun ScreenStartRender(
                     .width(200.dp),
                 value = subjectName,
                 onValueChange = {subjectName = it},
-                textStyle = TextStyle(textAlign = TextAlign.Center)
+                textStyle = TextStyle(textAlign = TextAlign.Center),
             )
             Button(
                 onClick = {
