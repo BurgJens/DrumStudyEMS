@@ -13,8 +13,12 @@ import viewmodel.DrumStudyViewModel
 import javax.sound.midi.*
 
 val appWindowSize = DpSize(1920.dp,1080.dp)
-val appTimeFrame = 7500L
+val appTimeFrame = 6000L
 val appDebugMode = false
+val timerPrecision = 2L
+val inputDelay = 100L
+
+val emsPort = "COM4"
 
 @Composable
 @Preview
@@ -34,7 +38,6 @@ fun main() = application {
     for (each in midiDeviceInfo){
         println("${each.name}    ${each.description}    ${each.version}    ${each.vendor}")
     }
-
 
     Window(
         onCloseRequest = ::exitApplication,

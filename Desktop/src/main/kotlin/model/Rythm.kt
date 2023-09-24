@@ -1,13 +1,14 @@
 package com.example.drumstudyems.model
 
 import model.LeftRight
+import model.RythmNote
 
 interface Rythm {
     open val name : String
 
     open val tactDuration : Long
 
-    open val notes : List<Pair<Long, LeftRight>>
+    open val notes : List<RythmNote>
 
     open val metronome : List<Long>
 }

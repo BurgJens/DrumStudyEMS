@@ -95,15 +95,12 @@ fun ScreenDrumHero(
         Column(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(10.dp),
+                .padding(60.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
                 onClick = {navigateBack()}
-            ){ Text("back") }
-            Button(
-                onClick = {navigateBack()}
-            ){ Text("save") }
+            ){ Text("Stop") }
         }
 
     }
@@ -144,7 +141,8 @@ fun RythmBox(
             val t = (each.playTime - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
             val posY = screenHeight.times(t)
             MusicNote(
-                optimalHit = optimalHitSize,
+                //timeFrame = each.timeFrame.toInt().dp,
+                timeFrame = screenHeight.times(each.timeFrame.toInt() / timeFrame.toFloat()),
                 offsetX = 150.dp,
                 offsetY = posY,
                 side = each.side,
@@ -198,11 +196,11 @@ fun ShowTimer(timeData: TimeData, offsetY : Dp){
 
 @Composable
 fun MusicNote (
-    optimalHit : Dp,
+    timeFrame : Dp,
     offsetY : Dp,
     offsetX : Dp,
     side : LeftRight,
-    hitTime : Long
+    hitTime : Long,
 ){
     val side = when(side){
         LeftRight.RIGHT -> 1
@@ -211,9 +209,9 @@ fun MusicNote (
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.
-        offset(y = offsetY- optimalHit/2, x = offsetX*side)
+        offset(y = offsetY- timeFrame/2, x = offsetX*side)
     ){
-        DrumHitCircle(optimalHit)
+        DrumHitCircle(timeFrame)
         if (appDebugMode){
             Text(
                 text = "$hitTime",
@@ -237,7 +235,7 @@ fun DrumHit(
         modifier = Modifier
             .offset(y = offsetY, x = offsetX * side)
             .width(75.dp)
-            .height(5.dp),
+            .height(2.dp),
         color = Color.Black
     )
 

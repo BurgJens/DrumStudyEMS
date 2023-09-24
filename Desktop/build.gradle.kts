@@ -27,8 +27,7 @@ dependencies {
     api("moe.tlaster:precompose:$precompose_version")
     api("moe.tlaster:precompose-viewmodel:$precompose_version")
 
-    implementation("dev.atsushieno:ktmidi:0.4.0")
-    implementation("dev.atsushieno:ktmidi-jvm-desktop:0.4.0")
+    implementation("com.fazecast:jSerialComm:2.7.0")
 }
 
 compose.desktop {

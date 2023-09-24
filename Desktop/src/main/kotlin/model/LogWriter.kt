@@ -1,8 +1,11 @@
 package model
 
+import com.example.drumstudyems.model.Rythm
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 class LogWriter {
     fun writeLog(folderName : String, fileName : String, data : String) {
@@ -30,10 +33,12 @@ class LogWriter {
         }
     }
 
-    fun logData(subjectName : String, rythmName : String, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
+    fun logData(subjectName : String, activeRythm : Rythm, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
 
-        logDrumnotes(subjectName, rythmName, drumNotes)
-        logDrumHits(subjectName, rythmName, drumHits)
+        logDrumnotes(subjectName, activeRythm.name, drumNotes)
+        logDrumHits(subjectName, activeRythm.name, drumHits)
+
+        logStatistics(subjectName, activeRythm,drumNotes,drumHits)
 
     }
 
@@ -53,17 +58,83 @@ class LogWriter {
         writeLog("${subjectName}/${subjectName}_${rythmName}", "${subjectName}_${rythmName}_drumHits",log )
     }
 
-    fun createStatistics(drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
-        val tempNotes = drumNotes.toList()
-        val tempHits = drumHits.toList()
+    fun logStatistics(subjectName : String, activeRythm : Rythm, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
+        val tempNotes = drumNotes.toMutableList()
+        val tempHits = drumHits.toMutableList()
 
-        for (note in drumNotes){
-            var nearest : Long? = null
+        val pairedList = mutableListOf<Pair<DrumNote, DrumHit?>>()
+        val unpairedHits = mutableListOf<DrumHit>()
 
-            for (hit in drumHits){
-                if (hit.hitTime >= note.playTime+751L) break
+        for (note in tempNotes) {
+            val hitsSameSideAndInRange = tempHits.filter {
+                it.side == note.side
+                        &&
+                (note.playTime-it.hitTime).absoluteValue <= note.timeFrame/2
+            }
+            if (hitsSameSideAndInRange.isNotEmpty()) {
+                val closestHit = hitsSameSideAndInRange.minByOrNull { Math.abs(it.hitTime - note.playTime) }
+                pairedList.add(Pair(note,closestHit))
+                closestHit?.let { tempHits.remove(it) }
+            }else{pairedList.add(Pair(note,null))}
+        }
+        unpairedHits.addAll(tempHits)
+
+        var generalCount = 0
+        var generalValue = 0L
+        var generalAverage = 0L
+
+        var lateCount = 0
+        var lateValue = 0L
+        var lateAverage = 0L
+        var lateMax = 0L
+
+        var earlyCount = 0
+        var earlyValue = 0L
+        var earlyAverage = 0L
+        var earlyMax = 0L
+
+
+        var notCount = 0
+
+        for (each in pairedList){
+            if (each.second == null){
+                notCount++
+            }else {
+                generalCount++
+                val timeDifference = each.first.playTime - each.second!!.hitTime
+                 generalValue += timeDifference
+                if (timeDifference > 0){
+                    earlyCount++
+                    earlyValue += abs(timeDifference)
+                    if (abs(timeDifference) > earlyMax) earlyMax = abs(timeDifference)
+                } else{
+                    lateCount++
+                    lateValue += abs(timeDifference)
+                    if (abs(timeDifference) > lateMax) lateMax = abs(timeDifference)
+                }
             }
         }
+        generalAverage = generalValue / generalCount
+        lateAverage = lateValue / lateCount
+        earlyAverage = earlyValue / earlyCount
 
+        val statsLog =  "${subjectName}s statistics\n\n" +
+
+                        "Notes to play:\t\t${pairedList.size}\n" +
+                        "Notes played:\t\t${generalCount}\n" +
+                        "Average timing error:\t${generalAverage}\n\n" +
+
+                        "Amount too early:\t${earlyCount}\n" +
+                        "Average too early:\t${earlyAverage}\n" +
+                        "Max too early:\t\t${earlyMax}\n\n" +
+
+                        "Amount too late:\t${lateCount}\n" +
+                        "Average too late:\t${lateAverage}\n" +
+                        "Max too late:\t\t${lateMax}\n\n" +
+
+                        "Notes missed:\t\t${notCount}\n" +
+                        "Missed hits:\t\t${unpairedHits.size}\n"
+
+        writeLog("${subjectName}/${subjectName}_${activeRythm.name}", "${subjectName}_${activeRythm.name}_statistics",statsLog )
     }
 }
