@@ -5,6 +5,7 @@ import emsPort
 import kotlinx.coroutines.*
 import java.io.InputStream
 import java.io.OutputStream
+import java.time.Duration
 
 class EmsHandler(timer: Timer) {
 
@@ -17,7 +18,10 @@ class EmsHandler(timer: Timer) {
     init {
         if (comPort != null) {
             comPort.openPort()
-            comPort.setBaudRate(115200)
+            comPort.setComPortParameters(115200, 8,1,0)
+            comPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED)
+            comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 0, 0)
+//            comPort.setBaudRate(115200)
 
             toEMSstream = comPort.outputStream
             fromEMSstream = comPort.inputStream
@@ -38,11 +42,25 @@ class EmsHandler(timer: Timer) {
         }
     }
 
-//    private val activeRythmFlow = timer.getTimeDataFlow().onEach { timeData ->
-//    }
-
-    fun sendCommand(cmd : String){
+    fun sendCommandString(cmd : String){
         toEMSstream.write(cmd.toByteArray())
+        toEMSstream.flush()
+    }
+
+    fun sendCommandValues(side : LeftRight, intensityMultiplier : Int, duration: Int){
+        val channelToInt = when(side){
+            LeftRight.RIGHT -> 0
+            LeftRight.LEFT -> 1
+        }
+        val cropintensityMultiplier = if (intensityMultiplier >= 100) {
+            100
+        } else if (intensityMultiplier <= 0){
+            0
+        } else {
+            intensityMultiplier
+        }
+        println("C${channelToInt}I${cropintensityMultiplier}T${duration}G")
+        sendCommandString("C${channelToInt}I${cropintensityMultiplier}T${duration}G;\n")
     }
 
 

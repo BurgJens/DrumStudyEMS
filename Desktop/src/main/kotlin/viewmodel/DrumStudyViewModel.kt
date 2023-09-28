@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import model.*
 import moe.tlaster.precompose.viewmodel.ViewModel
@@ -16,7 +17,7 @@ class DrumStudyViewModel : ViewModel() {
 
 
     private val configManager = ConfigManager()
-    private val timer = Timer(2000L, timerPrecision)
+    private val timer = Timer(timerPrecision)
     private val rythmManager = RythmManager(timer, appTimeFrame, {writeLog()})
     private val emsHandler = EmsHandler(timer)
     private val midiHandler = MidiHandler()
@@ -35,9 +36,19 @@ class DrumStudyViewModel : ViewModel() {
             rythmManager.activeDrumHits.toList(),
             rythmManager.metronome.toList()
         )
+    }.onEach {
+        for (each in it.drumNotes){
+            if (each.playTime <= it.timeData.currentTime + 500L && each.playTime >= it.timeData.currentTime){
+
+                emsHandler.sendCommandValues(each.side,100,2)
+//                emsHandler.sendCommandString("C1I100T1000G")
+            }else if (each.playTime >= it.timeData.currentTime - 500L && each.playTime < it.timeData.currentTime){
+
+            }
+        }
     }
 
-    fun sendEMScommand(cmd : String) = emsHandler.sendCommand(cmd)
+    fun sendEMScommand(cmd : String) = emsHandler.sendCommandString(cmd)
     fun getRythmManagerData() = rythmFlow
 
     fun debugButtonInpug(currentTime : Long){

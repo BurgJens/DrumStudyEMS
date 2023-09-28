@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.onCompletion
 
 data class TimeData(val currentTime : Long, val deltaTime : Long)
 
-class Timer(countDown : Long, val delay : Long) {
+class Timer(val delay : Long) {
 
     private val currentTimeFlow = flow{
         var startTime = System.currentTimeMillis()

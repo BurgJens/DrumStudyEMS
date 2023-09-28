@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import model.LeftRight
 import viewmodel.DrumStudyViewModel
 
 @Composable
@@ -41,8 +42,8 @@ fun ScreenEMSsetupRender(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var channel by remember { mutableStateOf("1") }
-        var intensity by remember { mutableStateOf("$startIntensity") }
+        var channel by remember { mutableStateOf("l") }
+        var intensityMultiplier by remember { mutableStateOf("$startIntensity") }
         var duration by remember { mutableStateOf("1000") }
 
         Row(
@@ -71,8 +72,8 @@ fun ScreenEMSsetupRender(
                     modifier = Modifier
                         .width(200.dp)
                         .padding(10.dp),
-                    value = intensity,
-                    onValueChange = { intensity = it },
+                    value = intensityMultiplier,
+                    onValueChange = { intensityMultiplier = it },
                     textStyle = TextStyle(textAlign = TextAlign.Center)
                 )
             }
@@ -92,8 +93,14 @@ fun ScreenEMSsetupRender(
         }
         Button(
             onClick = {
-                sendCMD("C${channel.toInt()-1}I${intensity}T${duration}G")
-                saveCurrentSettings(intensity.toInt())
+                sendCMD("C${
+                    if (channel == "l"){
+                        "0"
+                    }else{
+                        "1"
+                    }
+                }I${intensityMultiplier}T${duration}G;\n")
+                saveCurrentSettings(intensityMultiplier.toInt())
                       },
             modifier = Modifier
                 .width(200.dp)
@@ -102,7 +109,7 @@ fun ScreenEMSsetupRender(
         }
         Button(
             onClick = {
-                saveCurrentSettings(intensity.toInt())
+                saveCurrentSettings(intensityMultiplier.toInt())
                 navigateBack()
             },
             modifier = Modifier

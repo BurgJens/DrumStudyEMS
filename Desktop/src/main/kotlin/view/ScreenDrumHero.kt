@@ -21,6 +21,7 @@ import model.TimeData
 import kotlinx.coroutines.Dispatchers
 import viewmodel.DrumStudyViewModel
 import appWindowSize
+import model.calcLerpT
 
 
 @Composable
@@ -72,7 +73,6 @@ fun ScreenDrumHero(
             screenHeight,
             rythmManagerData,
             timeFrame,
-            optimalHitTimeFrame
         )
         if (appDebugMode){
             Text(
@@ -113,13 +113,10 @@ fun RythmBox(
     screenWidth : Dp,
     screenHeight : Dp,
     rythmManagerData : RythmManagerData,
-    timeFrame: Long,
-    optimalHitTimeFrame : Long
+    timeFrame: Long
     ){
     val upperEdge = rythmManagerData.timeData.currentTime + (timeFrame/3*2)
     val lowerEdge = rythmManagerData.timeData.currentTime - (timeFrame/3)
-
-    val optimalHitSize = screenHeight.times(optimalHitTimeFrame.toFloat() / timeFrame.toFloat())
 
     Box (
         modifier = Modifier
@@ -138,7 +135,7 @@ fun RythmBox(
         }
         CurrentTimeLine(rythmManagerData)
         for(each in rythmManagerData.drumNotes){
-            val t = (each.playTime - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
+            val t = calcLerpT(lowerEdge.toFloat(),upperEdge.toFloat(),each.playTime.toFloat())
             val posY = screenHeight.times(t)
             MusicNote(
                 //timeFrame = each.timeFrame.toInt().dp,
@@ -150,7 +147,7 @@ fun RythmBox(
 
         }
         for(each in rythmManagerData.drumHits){
-            val t = (each.hitTime - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
+            val t = calcLerpT(lowerEdge.toFloat(),upperEdge.toFloat(),each.hitTime.toFloat())
             val posY = screenHeight.times(t)
             DrumHit(
                 offsetX = 150.dp,
@@ -170,7 +167,7 @@ fun Metronome(rythmManagerData : RythmManagerData){
 
     for (each in rythmManagerData.metronome) {
 
-        val t = (each - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
+        val t = calcLerpT(lowerEdge.toFloat(),upperEdge.toFloat(),each.toFloat())
         val posY = appWindowSize.height.times(t)
 
         Divider(
@@ -257,7 +254,8 @@ fun CurrentTimeLine(rythmManagerData : RythmManagerData){
     val upperEdge = rythmManagerData.timeData.currentTime + (appTimeFrame/3*2)
     val lowerEdge = rythmManagerData.timeData.currentTime - (appTimeFrame/3)
 
-    val t = (rythmManagerData.timeData.currentTime - upperEdge).toFloat() / (lowerEdge - upperEdge).toFloat()
+    val t = calcLerpT(lowerEdge.toFloat(), upperEdge.toFloat(), rythmManagerData.timeData.currentTime.toFloat())
+
     val posY = appWindowSize.height.times(t)
 
     if (appDebugMode) ShowTimer(timeData = rythmManagerData.timeData, offsetY = posY)
