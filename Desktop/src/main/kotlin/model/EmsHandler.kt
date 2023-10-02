@@ -21,7 +21,6 @@ class EmsHandler(timer: Timer) {
             comPort.setComPortParameters(115200, 8,1,0)
             comPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED)
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 0, 0)
-//            comPort.setBaudRate(115200)
 
             toEMSstream = comPort.outputStream
             fromEMSstream = comPort.inputStream
@@ -59,7 +58,6 @@ class EmsHandler(timer: Timer) {
         } else {
             intensityMultiplier
         }
-        println("C${channelToInt}I${cropintensityMultiplier}T${duration}G")
         sendCommandString("C${channelToInt}I${cropintensityMultiplier}T${duration}G;\n")
     }
 

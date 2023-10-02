@@ -74,7 +74,7 @@ class LogWriter {
             if (hitsSameSideAndInRange.isNotEmpty()) {
                 val closestHit = hitsSameSideAndInRange.minByOrNull { Math.abs(it.hitTime - note.playTime) }
                 pairedList.add(Pair(note,closestHit))
-                closestHit?.let { tempHits.remove(it) }
+                tempHits.remove(closestHit)
             }else{pairedList.add(Pair(note,null))}
         }
         unpairedHits.addAll(tempHits)
@@ -93,7 +93,6 @@ class LogWriter {
         var earlyAverage = 0L
         var earlyMax = 0L
 
-
         var notCount = 0
 
         for (each in pairedList){
@@ -101,7 +100,7 @@ class LogWriter {
                 notCount++
             }else {
                 generalCount++
-                val timeDifference = each.first.playTime - each.second!!.hitTime
+                val timeDifference = abs(each.first.playTime - each.second!!.hitTime)
                  generalValue += timeDifference
                 if (timeDifference > 0){
                     earlyCount++
@@ -114,9 +113,15 @@ class LogWriter {
                 }
             }
         }
-        generalAverage = generalValue / generalCount
+
+
+        if (generalCount == 0) {
+            return
+        }
         lateAverage = lateValue / lateCount
+        generalAverage = generalValue / generalCount
         earlyAverage = earlyValue / earlyCount
+
 
         val statsLog =  "${subjectName}s statistics\n\n" +
 
@@ -124,13 +129,13 @@ class LogWriter {
                         "Notes played:\t\t${generalCount}\n" +
                         "Average timing error:\t${generalAverage}\n\n" +
 
-                        "Amount too early:\t${earlyCount}\n" +
-                        "Average too early:\t${earlyAverage}\n" +
-                        "Max too early:\t\t${earlyMax}\n\n" +
+                        "Amount early:\t\t${earlyCount}\n" +
+                        "Average early:\t\t${earlyAverage}\n" +
+                        "Max early:\t\t${earlyMax}\n\n" +
 
-                        "Amount too late:\t${lateCount}\n" +
-                        "Average too late:\t${lateAverage}\n" +
-                        "Max too late:\t\t${lateMax}\n\n" +
+                        "Amount late:\t\t${lateCount}\n" +
+                        "Average late:\t\t${lateAverage}\n" +
+                        "Max late:\t\t${lateMax}\n\n" +
 
                         "Notes missed:\t\t${notCount}\n" +
                         "Missed hits:\t\t${unpairedHits.size}\n"

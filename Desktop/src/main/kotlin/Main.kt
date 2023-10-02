@@ -12,11 +12,15 @@ import view.AppNavigation
 import viewmodel.DrumStudyViewModel
 import javax.sound.midi.*
 
-val appWindowSize = DpSize(1920.dp,1080.dp)
-val appTimeFrame = 6000L
-val appDebugMode = false
-val timerPrecision = 2L
-val inputDelay = 100L
+val AppWindowSize = DpSize(1920.dp,1080.dp)
+val AppTimeFrame = 6000L
+val AppDebugMode = false
+val TimerPrecision = 4L
+val InputDelay = 100L
+
+val TimeFrameToHit = 124L
+
+val RepeatRythm = 4
 
 val emsPort = "COM4"
 
@@ -41,7 +45,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        state = WindowState(size = appWindowSize, position = WindowPosition(Alignment.TopCenter))
+        state = WindowState(size = AppWindowSize, position = WindowPosition(Alignment.TopCenter))
     ) {
         App()
     }

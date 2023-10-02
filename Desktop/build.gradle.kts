@@ -29,7 +29,9 @@ dependencies {
 
     implementation("com.fazecast:jSerialComm:2.7.0")
 
-    implementation ("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.code.gson:gson:2.8.9")
+
+    implementation("javazoom:jlayer:1.0.1")
 }
 
 compose.desktop {

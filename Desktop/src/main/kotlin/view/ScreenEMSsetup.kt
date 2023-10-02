@@ -95,9 +95,9 @@ fun ScreenEMSsetupRender(
             onClick = {
                 sendCMD("C${
                     if (channel == "l"){
-                        "0"
-                    }else{
                         "1"
+                    }else{
+                        "0"
                     }
                 }I${intensityMultiplier}T${duration}G;\n")
                 saveCurrentSettings(intensityMultiplier.toInt())
