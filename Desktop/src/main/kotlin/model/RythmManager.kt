@@ -2,7 +2,6 @@ package model
 
 import com.example.drumstudyems.model.Rythm
 import InputDelay
-import RepeatRythm
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.atomic.AtomicBoolean
@@ -58,7 +57,7 @@ class RythmManager(timer: Timer, timeFrame : Long, onCompletion : () -> Unit) {
         }
         rightDrumInput.set(false)
 
-        if (rythmSegment <= RepeatRythm - 1){
+        if (rythmSegment <= activeRythm.repeat - 1){
             for (each in activeRythm.notes) {
                 if (
                     each.playTime+timeOffset <= timeInSegment+timeOffset &&

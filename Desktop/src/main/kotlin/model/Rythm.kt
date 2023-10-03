@@ -4,6 +4,8 @@ import model.LeftRight
 import model.RythmNote
 
 interface Rythm {
+    open val repeat : Int
+
     open val name : String
 
     open val tactDuration : Long

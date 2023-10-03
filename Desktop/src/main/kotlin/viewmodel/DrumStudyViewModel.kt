@@ -152,6 +152,14 @@ class DrumStudyViewModel : ViewModel() {
                 newRythm = MrRythm()
                 activeRythmFlow.value = RythmsEnum.MR_RYTHM
             }
+            RythmsEnum.SL_RYTHM -> {
+                newRythm = SlRythm()
+                activeRythmFlow.value = RythmsEnum.SL_RYTHM
+            }
+            RythmsEnum.SR_RYTHM -> {
+                newRythm = SrRythm()
+                activeRythmFlow.value = RythmsEnum.SR_RYTHM
+            }
         }
         rythmManager.setNewActiveRythm(newRythm)
     }

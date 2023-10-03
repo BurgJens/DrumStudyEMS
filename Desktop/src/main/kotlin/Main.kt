@@ -20,8 +20,6 @@ val InputDelay = 100L
 
 val TimeFrameToHit = 124L
 
-val RepeatRythm = 4
-
 val emsPort = "COM6"
 
 @Composable
