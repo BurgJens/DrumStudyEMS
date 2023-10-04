@@ -72,9 +72,9 @@ class DrumStudyViewModel : ViewModel() {
             if (signalDT >= 50L) {
                 for (each in it.drumNotes) {
 
-                    if ((each.playTime < it.timeData.currentTime + 250L) && !each.signaled){
+                    if ((each.playTime < it.timeData.currentTime + 400L) && !each.signaled){
 
-                        emsHandler.sendCommandValues(each.side,100,250)
+                        emsHandler.sendCommandValues(each.side,100,400)
 
                         each.signaled = true
                     }

@@ -35,7 +35,7 @@ class ErRythm() : Rythm {
 
     override val name = "ER"
 
-    val speedMult = 1.25
+    val speedMult = 1.75
 
     override val tactDuration : Long = (4000L * speedMult).toLong()
 
@@ -64,7 +64,7 @@ class ElRythm() : Rythm {
 
     override val name = "EL"
 
-    val speedMult = 1.25
+    val speedMult = 1.75
 
     override val tactDuration : Long = (4000L * speedMult).toLong()
 
