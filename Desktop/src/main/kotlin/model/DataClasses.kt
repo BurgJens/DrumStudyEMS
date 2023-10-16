@@ -8,4 +8,4 @@ data class DrumHit(val hitTime: Long, val side : LeftRight)
 
 data class RythmManagerData(val timeData: TimeData, val drumNotes : List<DrumNote>, val drumHits : List<DrumHit>, val metronome : List<Long>)
 
-data class RythmNote (val playTime : Long, val timeFrame : Long, val side : LeftRight, var timesAdded : Int = 0)
+data class RythmNote (val playTime : Long, val timeFrame : Long, var side : LeftRight, var timesAdded : Int = 0)

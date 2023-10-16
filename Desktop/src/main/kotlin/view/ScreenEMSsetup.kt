@@ -1,5 +1,6 @@
 package view
 
+import EmsDuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -44,7 +45,7 @@ fun ScreenEMSsetupRender(
     ) {
         var channel by remember { mutableStateOf("l") }
         var intensityMultiplier by remember { mutableStateOf("$startIntensity") }
-        var duration by remember { mutableStateOf("1000") }
+        var duration by remember { mutableStateOf(EmsDuration.toString()) }
 
         Row(
             modifier = Modifier,

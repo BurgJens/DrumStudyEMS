@@ -2,6 +2,7 @@ package viewmodel
 
 import MidiHandler
 import AppTimeFrame
+import EmsDuration
 import com.example.drumstudyems.model.Rythm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,9 +73,9 @@ class DrumStudyViewModel : ViewModel() {
             if (signalDT >= 50L) {
                 for (each in it.drumNotes) {
 
-                    if ((each.playTime < it.timeData.currentTime + 400L) && !each.signaled){
+                    if ((each.playTime < it.timeData.currentTime + EmsDuration) && !each.signaled){
 
-                        emsHandler.sendCommandValues(each.side,100,400)
+                        emsHandler.sendCommandValues(each.side,100,EmsDuration)
 
                         each.signaled = true
                     }
@@ -84,7 +85,7 @@ class DrumStudyViewModel : ViewModel() {
         }
         if (supportMode.value == SupportMode.AUDIO){
             var signalDT = it.timeData.currentTime - lastSignalSend
-            if (signalDT >= 50L) {
+            if (signalDT >= 100L) {
                 for (each in it.drumNotes) {
 
             if ((each.playTime < it.timeData.currentTime + 5L) && !each.signaled){

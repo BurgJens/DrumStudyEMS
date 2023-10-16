@@ -114,6 +114,7 @@ class RythmManager(timer: Timer, timeFrame : Long, onCompletion : () -> Unit) {
         activeDrumNotes.sortBy {it.playTime}
         activeDrumHits.sortBy {it.hitTime}
         onCompletion()
+        metronome.clear()
         activeDrumNotes.clear()
         activeDrumHits.clear()
         oldDrumNotes.clear()

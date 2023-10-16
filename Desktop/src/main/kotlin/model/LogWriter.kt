@@ -115,7 +115,7 @@ class LogWriter {
         }
 
 
-        if (generalCount == 0) {
+        if (generalCount == 0 || lateCount == 0 || earlyCount == 0) {
             return
         }
         lateAverage = lateValue / lateCount

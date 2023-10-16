@@ -22,6 +22,8 @@ val TimeFrameToHit = 124L
 
 val emsPort = "COM6"
 
+val EmsDuration = 200
+
 @Composable
 @Preview
 fun App() {
