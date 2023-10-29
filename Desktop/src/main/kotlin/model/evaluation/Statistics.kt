@@ -1,4 +1,4 @@
-package evaluation
+package model.evaluation
 
 import model.DrumHit
 import model.DrumNote
@@ -31,6 +31,7 @@ data class StudyStatistics(
 
     val missedNotes : Int,
     val missedHits : Int,
+    val missedBoth : Int,
 
     val hitPercent : Float,
 
@@ -51,6 +52,7 @@ data class StudyStatistics(
 
     val missedNotesLeft : Int,
     val missedHitsLeft : Int,
+    val missedBothLeft : Int,
 
     //LEFT
     val notesToPlayRight : Int,
@@ -69,9 +71,10 @@ data class StudyStatistics(
 
     val missedNotesRight : Int,
     val missedHitsRight : Int,
+    val missedBothRight : Int,
 )
 
-fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics{
+fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics {
     println(data.path)
 
     val tempNotes = data.drumNotes.toMutableList()
@@ -236,6 +239,7 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
 
         missedNotes,
         missedHits,
+        missedNotes+missedHits,
 
         hitPercent,
 
@@ -256,6 +260,7 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
 
         missedNotesLeft,
         missedHitsLeft,
+        missedNotesLeft+missedHitsLeft,
 
 
         //LEFT
@@ -275,6 +280,7 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
 
         missedNotesRight,
         missedHitsRight,
+        missedNotesRight+missedHitsRight,
     )
 
     val path = data.path.substringBeforeLast("\\")
@@ -294,9 +300,9 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
         bufferedWriter.write(statsLog)
         bufferedWriter.close()
 
-        println("Daten erfolgreich geschrieben: ${file.absolutePath}")
+        println("data written successfully: ${file.absolutePath}")
     } catch (e: Exception) {
-        println("Fehler beim Schreiben in die Datei: ${e.message}")
+        println("erorr writing: ${e.message}")
     }
 
     return statistics

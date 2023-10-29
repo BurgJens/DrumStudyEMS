@@ -1,7 +1,7 @@
 package model
 
 import TimeFrameToHit
-import com.example.drumstudyems.model.Rythm
+import com.example.drumstudyems.model.IRythm
 
 enum class RythmsEnum (){
     BASE_RYTHM,
@@ -14,30 +14,30 @@ enum class RythmsEnum (){
 }
 
 
-class BaseRythm() : Rythm {
+class BaseRythm() : IRythm {
     override val repeat = 999
 
     override val name = "BaseRythm"
 
-    override val tactDuration : Long = 4 * 1000
+    override val duration : Long = 4 * 1000
 
     override val notes = listOf(
-        RythmNote(0L, 124L, LeftRight.LEFT),
-        RythmNote(1000L, 124L, LeftRight.RIGHT),
-        RythmNote(2000L, 124L, LeftRight.LEFT),
-        RythmNote(3000L, 124L, LeftRight.RIGHT))
+        RythmNote(0L, TimeFrameToHit, LeftRight.LEFT),
+        RythmNote(1000L, TimeFrameToHit, LeftRight.RIGHT),
+        RythmNote(2000L, TimeFrameToHit, LeftRight.LEFT),
+        RythmNote(3000L, TimeFrameToHit, LeftRight.RIGHT))
 
     override val metronome = listOf(0L)
 }
 
-open class ElRythm() : Rythm {
+open class ElRythm() : IRythm {
     override val repeat = 4
 
     override val name = "EL"
 
     val speedMult = 1.5
 
-    override val tactDuration : Long = (4000L * speedMult).toLong()
+    override val duration : Long = (4000L * speedMult).toLong()
 
     override val notes = listOf(
         RythmNote((0 * speedMult).toLong(), TimeFrameToHit,  LeftRight.LEFT),
@@ -74,14 +74,14 @@ class ErRythm() : ElRythm() {
 
 
 
-open class MlRythm() : Rythm {
+open class MlRythm() : IRythm {
     override val repeat = 4
 
     override val name = "ML"
 
     val speedMult = 1.5
 
-    override val tactDuration : Long = (4000L * speedMult).toLong()
+    override val duration : Long = (4000L * speedMult).toLong()
 
     override val notes = listOf(
         RythmNote((0 * speedMult).toLong(), TimeFrameToHit,  LeftRight.LEFT),
@@ -120,14 +120,14 @@ class MrRythm() : MlRythm() {
     }
 }
 
-open class SlRythm() : Rythm {
+open class SlRythm() : IRythm {
     override val repeat = 2
 
     override val name = "SL"
 
     val speedMult = 1.8
 
-    override val tactDuration : Long = (8000L * speedMult).toLong()
+    override val duration : Long = (8000L * speedMult).toLong()
 
     override val notes = listOf(
         RythmNote((0 * speedMult).toLong(), TimeFrameToHit,  LeftRight.LEFT),

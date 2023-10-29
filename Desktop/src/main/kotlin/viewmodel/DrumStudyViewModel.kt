@@ -3,7 +3,7 @@ package viewmodel
 import MidiHandler
 import AppTimeFrame
 import EmsDuration
-import com.example.drumstudyems.model.Rythm
+import com.example.drumstudyems.model.IRythm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,34 +40,9 @@ class DrumStudyViewModel : ViewModel() {
     val logAfter = AtomicBoolean(false)
 
     val rythmFlow = rythmManager.getActiveRythmFlow().map {timeData ->
-        RythmManagerData(
-            timeData,
-            rythmManager.activeDrumNotes.toList(),
-            rythmManager.activeDrumHits.toList(),
-            rythmManager.metronome.toList()
-        )
+        rythmManager.getRythmManagerData(timeData)
     }.onEach {
         if (supportMode.value == SupportMode.EMS){
-//            var signalDT = it.timeData.currentTime - lastSignalSend
-//            if (signalDT >= 50L){
-//                for (each in it.drumNotes){
-//
-////            if ((each.playTime < it.timeData.currentTime + 500L) && !each.signaled){
-////                emsHandler.sendCommandValues(each.side,100,500)
-////                each.signaled = true
-////            }
-//
-//                    if (each.playTime <= it.timeData.currentTime + 500L && each.playTime >= it.timeData.currentTime){
-//
-//
-//
-//                        emsHandler.sendCommandValues(each.side,100,50)
-//                        lastSignalSend = it.timeData.currentTime
-//                    }else if (each.playTime >= it.timeData.currentTime - 500L && each.playTime < it.timeData.currentTime){
-//
-//                    }
-//                }
-//            }
 
             var signalDT = it.timeData.currentTime - lastSignalSend
             if (signalDT >= 50L) {
@@ -87,17 +62,16 @@ class DrumStudyViewModel : ViewModel() {
             var signalDT = it.timeData.currentTime - lastSignalSend
             if (signalDT >= 100L) {
                 for (each in it.drumNotes) {
+                    if ((each.playTime < it.timeData.currentTime + 5L) && !each.signaled){
 
-            if ((each.playTime < it.timeData.currentTime + 5L) && !each.signaled){
+                        when (each.side){
+                            LeftRight.LEFT -> beeper.playSound(LeftRight.LEFT)
+                            LeftRight.RIGHT -> beeper.playSound(LeftRight.RIGHT)
+                        }
 
-                when (each.side){
-                    LeftRight.LEFT -> beeper.playSound(LeftRight.LEFT)
-                    LeftRight.RIGHT -> beeper.playSound(LeftRight.RIGHT)
-                }
-
-                each.signaled = true
-            }
-                }
+                        each.signaled = true
+                    }
+                        }
             }
         }
 
@@ -130,7 +104,7 @@ class DrumStudyViewModel : ViewModel() {
     val activeRythmFlow = MutableStateFlow(RythmsEnum.BASE_RYTHM)
 
     fun setRythm(rythmsEnum : RythmsEnum){
-        var newRythm : Rythm
+        var newRythm : IRythm
 
         when(rythmsEnum){
             RythmsEnum.BASE_RYTHM -> {

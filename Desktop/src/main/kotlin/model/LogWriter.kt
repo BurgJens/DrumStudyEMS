@@ -1,6 +1,6 @@
 package model
 
-import com.example.drumstudyems.model.Rythm
+import com.example.drumstudyems.model.IRythm
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -33,7 +33,7 @@ class LogWriter {
         }
     }
 
-    fun logData(subjectName : String, activeRythm : Rythm, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
+    fun logData(subjectName : String, activeRythm : IRythm, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
 
         logDrumnotes(subjectName, activeRythm.name, drumNotes)
         logDrumHits(subjectName, activeRythm.name, drumHits)
@@ -58,7 +58,7 @@ class LogWriter {
         writeLog("${subjectName}/${subjectName}_${rythmName}", "${subjectName}_${rythmName}_drumHits",log )
     }
 
-    fun logStatistics(subjectName : String, activeRythm : Rythm, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
+    fun logStatistics(subjectName : String, activeRythm : IRythm, drumNotes : List<DrumNote>, drumHits : List<DrumHit>){
         val tempNotes = drumNotes.toMutableList()
         val tempHits = drumHits.toMutableList()
 

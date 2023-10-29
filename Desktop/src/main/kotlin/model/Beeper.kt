@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import java.io.FileInputStream
 
 class Beeper() {
+
     fun playSound(side: LeftRight) {
         CoroutineScope(Dispatchers.Default).launch {
             val filePath = when (side) {
@@ -14,13 +15,13 @@ class Beeper() {
                 LeftRight.RIGHT -> "audio/beepR.mp3"
             }
             try {
-                val inputStreamL = FileInputStream(filePath)
-                val playerL = AdvancedPlayer(inputStreamL)
+                val inputStream = FileInputStream(filePath)
+                val player = AdvancedPlayer(inputStream)
 
-                playerL.play()
-                playerL.close()
+                player.play()
+                player.close()
             }catch (e: Exception) {
-                println("Fehler beim Abspielen der Datei: ${e.message}")
+                println("Error playing: ${e.message}")
             }
         }
     }

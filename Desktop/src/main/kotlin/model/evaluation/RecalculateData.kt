@@ -118,7 +118,7 @@ fun parseDrumNotesFromFile(filePath: String, timeFrame: Long): List<DrumNote> {
 fun toExcel(data : List<StudyStatistics>){
     val workbook: Workbook = WorkbookFactory.create(true)
 
-    val sheet: Sheet = workbook.createSheet("Mein Arbeitsblatt")
+    val sheet: Sheet = workbook.createSheet("Statistics")
 
     var rowNum = 0
 
@@ -148,13 +148,13 @@ fun toExcel(data : List<StudyStatistics>){
                     Int::class.java -> cell.setCellValue((value as Int).toDouble())
                     Float::class.java -> cell.setCellValue((value as Float).toDouble())
                     Boolean::class.java -> cell.setCellValue(value as Boolean)
-                    else -> cell.setCellValue("Nicht unterstützter Datentyp")
+                    else -> cell.setCellValue("not supported")
                 }
             }
         }
     }
 
-    val excelFile = FileOutputStream("output.xlsx")
+    val excelFile = FileOutputStream("logs/statistics.xlsx")
     workbook.write(excelFile)
     excelFile.close()
 

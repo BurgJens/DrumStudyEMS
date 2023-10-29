@@ -15,13 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import AppDebugMode
 import AppTimeFrame
-import model.LeftRight
-import model.RythmManagerData
-import model.TimeData
 import kotlinx.coroutines.Dispatchers
 import viewmodel.DrumStudyViewModel
 import AppWindowSize
-import model.calcLerpT
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import model.*
 
 
 @Composable
@@ -136,9 +134,9 @@ fun RythmBox(
         ) {
 
         }
-        CurrentTimeLine(rythmManagerData)
+        CurrentTimeLine(rythmManagerData, upperEdge, lowerEdge)
         for(each in rythmManagerData.drumNotes){
-            val t = calcLerpT(lowerEdge.toFloat(),upperEdge.toFloat(),each.playTime.toFloat())
+            val t = inverseLerp(lowerEdge.toFloat(),upperEdge.toFloat(),each.playTime.toFloat())
             val posY = screenHeight.times(t)
             MusicNote(
                 //timeFrame = each.timeFrame.toInt().dp,
@@ -150,7 +148,7 @@ fun RythmBox(
 
         }
         for(each in rythmManagerData.drumHits){
-            val t = calcLerpT(lowerEdge.toFloat(),upperEdge.toFloat(),each.hitTime.toFloat())
+            val t = inverseLerp(lowerEdge.toFloat(),upperEdge.toFloat(),each.hitTime.toFloat())
             val posY = screenHeight.times(t)
             DrumHit(
                 offsetX = 150.dp,
@@ -158,19 +156,17 @@ fun RythmBox(
                 side = each.side
             )
         }
-        Metronome(rythmManagerData)
+        Metronome(rythmManagerData, upperEdge, lowerEdge)
     }
 
 }
 
 @Composable
-fun Metronome(rythmManagerData : RythmManagerData){
-    val upperEdge = rythmManagerData.timeData.currentTime + (AppTimeFrame/3*2)
-    val lowerEdge = rythmManagerData.timeData.currentTime - (AppTimeFrame/3)
+fun Metronome(rythmManagerData : RythmManagerData, upperEdge : Long, lowerEdge : Long){
 
     for (each in rythmManagerData.metronome) {
 
-        val t = calcLerpT(lowerEdge.toFloat(),upperEdge.toFloat(),each.toFloat())
+        val t = inverseLerp(lowerEdge.toFloat(),upperEdge.toFloat(),each.toFloat())
         val posY = AppWindowSize.height.times(t)
 
         Divider(
@@ -253,11 +249,9 @@ fun DrumHitCircle (optimalHit: Dp){
 }
 
 @Composable
-fun CurrentTimeLine(rythmManagerData : RythmManagerData){
-    val upperEdge = rythmManagerData.timeData.currentTime + (AppTimeFrame/3*2)
-    val lowerEdge = rythmManagerData.timeData.currentTime - (AppTimeFrame/3)
+fun CurrentTimeLine(rythmManagerData : RythmManagerData,  upperEdge : Long, lowerEdge : Long){
 
-    val t = calcLerpT(lowerEdge.toFloat(), upperEdge.toFloat(), rythmManagerData.timeData.currentTime.toFloat())
+    val t = inverseLerp(lowerEdge.toFloat(), upperEdge.toFloat(), rythmManagerData.timeData.currentTime.toFloat())
 
     val posY = AppWindowSize.height.times(t)
 
@@ -273,11 +267,47 @@ fun CurrentTimeLine(rythmManagerData : RythmManagerData){
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ScreenDrumHeroPreview() {
-//    DrumStudyEMSTheme {
-//        ScreenDrumHero(Pair(1L, 0L))
-//    }
-//}
+@Preview
+@Composable
+fun ScreenDrumHeroPreview() {
+    val speedMult = 1.5
 
+    val rythmManagerData = RythmManagerData(
+        timeData = TimeData(
+            currentTime = 1000L,
+            deltaTime = 4L
+        ),
+        drumNotes = listOf(
+            DrumNote(1,(0 * speedMult).toLong(),124L,LeftRight.LEFT, false),
+            DrumNote(1,(500 * speedMult).toLong(),124L,LeftRight.RIGHT, false),
+
+            DrumNote(1,(1000 * speedMult).toLong(),124L,LeftRight.LEFT, false),
+            DrumNote(1,(1500 * speedMult).toLong(),124L,LeftRight.RIGHT, false),
+
+            DrumNote(1,(2000 * speedMult).toLong(),124L,LeftRight.LEFT, false),
+            DrumNote(1,(2250 * speedMult).toLong(),124L,LeftRight.LEFT, false),
+            DrumNote(1,(2500 * speedMult).toLong(),124L,LeftRight.RIGHT, false),
+            DrumNote(1,(2750 * speedMult).toLong(),124L,LeftRight.RIGHT, false),
+
+            DrumNote(1,(3000 * speedMult).toLong(),124L,LeftRight.LEFT, false),
+            DrumNote(1,(3250 * speedMult).toLong(),124L,LeftRight.LEFT, false),
+            DrumNote(1,(3500 * speedMult).toLong(),124L,LeftRight.RIGHT, false)
+        ),
+        drumHits = listOf(
+            DrumHit(950L, LeftRight.LEFT),
+            DrumHit(20L, LeftRight.LEFT),
+            DrumHit((500 * speedMult).toLong()-40L, LeftRight.RIGHT)
+        ),
+        metronome = listOf(0L)
+    )
+    val timeFrame = 6000L // Beispielwert für timeFrame
+    val optimalHitTimeFrame = 124L // Beispielwert für optimalHitTimeFrame
+
+    ScreenDrumHero(
+        rythmManagerData = rythmManagerData,
+        timeFrame = timeFrame,
+        optimalHitTimeFrame = optimalHitTimeFrame,
+        debugButtonInput = {},
+        navigateBack = {}
+    )
+}

@@ -21,6 +21,8 @@ class Timer(val delay : Long) {
             currentTime = currentTimeGlobal - startTime
             deltaTime = currentTime - last
 
+
+            println(deltaTime)
             emit(TimeData(currentTime,deltaTime))
         }
     }.flowOn(Dispatchers.Default)

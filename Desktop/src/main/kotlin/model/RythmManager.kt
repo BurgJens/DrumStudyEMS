@@ -1,6 +1,6 @@
 package model
 
-import com.example.drumstudyems.model.Rythm
+import com.example.drumstudyems.model.IRythm
 import InputDelay
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class RythmManager(timer: Timer, timeFrame : Long, onCompletion : () -> Unit) {
 
-    var activeRythm = BaseRythm() as Rythm
+    var activeRythm = BaseRythm() as IRythm
 
     val activeDrumNotes = mutableListOf<DrumNote>()
     val oldDrumNotes = mutableListOf<DrumNote>()
@@ -33,27 +33,34 @@ class RythmManager(timer: Timer, timeFrame : Long, onCompletion : () -> Unit) {
         rightDrumInput.set(value)
     }
 
-    fun setNewActiveRythm(newRythm : Rythm) {
+    fun setNewActiveRythm(newRythm : IRythm) {
         activeRythm = newRythm
+    }
+
+    fun getRythmManagerData(timeData : TimeData):RythmManagerData{
+        return RythmManagerData(
+            timeData,
+            activeDrumNotes.toList(),
+            activeDrumHits.toList(),
+            metronome.toList()
+        )
     }
 
 
     private val activeRythmFlow = timer.getTimeDataFlow().onEach { timeData ->
-        val rythmSegment = timeData.currentTime / activeRythm.tactDuration
-        val timeInSegment = timeData.currentTime.rem(activeRythm.tactDuration)
+        val rythmSegment = timeData.currentTime / activeRythm.duration
+        val timeInSegment = timeData.currentTime.rem(activeRythm.duration)
         val timeOffset = timeFrame/3*2
 
 
         if (leftDrumInput.get() && (timeData.currentTime - lastInputLeft) > InputDelay) {
             lastInputLeft = timeData.currentTime
             activeDrumHits.add(DrumHit(lastInputLeft,LeftRight.LEFT))
-            println("left")
         }
         leftDrumInput.set(false)
         if (rightDrumInput.get() && (timeData.currentTime - lastInputLeft) > InputDelay) {
             lastInputRight = timeData.currentTime
             activeDrumHits.add(DrumHit(lastInputRight, LeftRight.RIGHT))
-            println("right")
         }
         rightDrumInput.set(false)
 
@@ -67,7 +74,7 @@ class RythmManager(timer: Timer, timeFrame : Long, onCompletion : () -> Unit) {
                     activeDrumNotes.add(
                         DrumNote(
                             segment = rythmSegment,
-                            playTime = rythmSegment * activeRythm.tactDuration + each.playTime + timeOffset,
+                            playTime = rythmSegment * activeRythm.duration + each.playTime + timeOffset,
                             timeFrame = each.timeFrame,
                             side = each.side
                         )
@@ -83,7 +90,7 @@ class RythmManager(timer: Timer, timeFrame : Long, onCompletion : () -> Unit) {
                 each + timeOffset <= timeInSegment + timeOffset &&
                 each + timeOffset >= timeInSegment - timeData.deltaTime +timeOffset
             ) {
-                metronome.add(rythmSegment * activeRythm.tactDuration + each + timeOffset)
+                metronome.add(rythmSegment * activeRythm.duration + each + timeOffset)
             }
         }
 

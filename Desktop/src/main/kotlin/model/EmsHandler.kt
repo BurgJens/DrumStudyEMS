@@ -18,9 +18,7 @@ class EmsHandler(timer: Timer) {
     init {
         if (comPort != null) {
             comPort.openPort()
-            comPort.setComPortParameters(115200, 8,1,0)
-            comPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED)
-            comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 0, 0)
+            comPort.setBaudRate(115200)
 
             toEMSstream = comPort.outputStream
             fromEMSstream = comPort.inputStream

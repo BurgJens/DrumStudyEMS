@@ -1,0 +1,62 @@
+
+
+Notes to play:			44
+Notes played:			41
+Average timing error:		24
+
+Notes hit percent:		93.181816
+
+Exact hit :			0
+
+Amount early:			15
+Average early:			20
+Max early:			38
+
+Amount late:			26
+Average late:			26
+Max late:			51
+
+Notes missed:			3
+Missed hits:			4
+
+
+LEFT SIDE
+
+Notes to play Left:		20
+Notes played Left:		17
+Average timing error Left:	22
+
+Exact hit Left:			0
+
+Amount early Left:		4
+Average early Left:		20
+Max early Left:			38
+
+Amount late Left:		13
+Average late Left:		22
+Max late Left:			43
+
+Notes missed Left:		3
+Missed hits Left:		3
+
+
+RIGHT SIDE
+
+Notes to play Right:		24
+Notes played Right:		24
+Average timing error Right:	25
+
+Exact hit Right:		0
+
+Amount early Right:		11
+Average early Right:		20
+Max early Right:		28
+
+Amount late Right:		13
+Average late Right:		29
+Max late Right:			51
+
+Notes missed Right:		0
+Missed hits Right:		1
+
+
