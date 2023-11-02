@@ -18,6 +18,8 @@ data class StudyStatistics(
     val notesToPlay : Int,
     val notesPlayed : Int,
     val averageTimingError  : Int,
+    val errorRatioAllErrors: Float,
+    val errorRatioAllMissedNotes: Float,
 
     val playedExact : Int,
 
@@ -39,6 +41,8 @@ data class StudyStatistics(
     val notesToPlayLeft : Int,
     val notesPlayedLeft : Int,
     val averageTimingErrorLeft : Int,
+    val errorRatioAllErrorsLeft: Float,
+    val errorRatioAllMissedNotesLeft: Float,
 
     val playedExactLeft : Int,
 
@@ -58,6 +62,8 @@ data class StudyStatistics(
     val notesToPlayRight : Int,
     val notesPlayedRight : Int,
     val averageTimingErrorRight : Int,
+    val errorRatioAllErrorsRight: Float,
+    val errorRatioAllMissedNotesRight: Float,
 
     val playedExactRight : Int,
 
@@ -226,6 +232,8 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
         notesToPlay,
         notesPlayed,
         averageTimingError,
+        ((missedNotes.toFloat()+missedHits.toFloat())/notesPlayed.toFloat())*100,
+        (missedNotes.toFloat()/notesPlayed.toFloat())*100,
 
         playedExact,
 
@@ -247,6 +255,8 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
         notesToPlayLeft,
         notesPlayedLeft,
         averageTimingErrorLeft,
+        ((missedNotesLeft.toFloat()+missedHitsLeft.toFloat())/notesPlayed.toFloat())*100,
+        (missedNotesLeft.toFloat()/notesPlayedLeft.toFloat())*100,
 
         playedExactLeft,
 
@@ -267,6 +277,8 @@ fun calcAndLogStatistics(data : EvaluationData, name : String) : StudyStatistics
         notesToPlayRight,
         notesPlayedRight,
         averageTimingErrorRight,
+        ((missedNotesRight.toFloat()+missedHitsRight.toFloat())/notesPlayed.toFloat())*100,
+        (missedNotesRight.toFloat()/notesPlayedRight.toFloat())*100,
 
         playedExactRight,
 
